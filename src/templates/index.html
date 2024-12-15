@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Envases</title>
+</head>
+<body>
+    <h1>Inventario de Envases</h1>
+
+    <form action="/agregar_envase" method="post">
+        <label for="cliente">Nombre del cliente:</label>
+        <input type="text" id="cliente" name="cliente" required>
+        
+        <label for="tipo_envase">Tipo de envase:</label>
+        <input type="text" id="tipo_envase" name="tipo_envase" required>
+        
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha">
+        
+        <label for="cancelado">Cancelado:</label>
+        <input type="checkbox" id="cancelado" name="cancelado">
+        
+        <button type="submit">Guardar</button>
+    </form>
+    
+
+    <h2>Lista de Envases</h2>
+    <ul>
+        {% for envase in envases %}
+            <li>
+                ID: {{ envase['id'] }} | 
+                Cliente: {{ envase['cliente'] }} | 
+                Tipo: {{ envase['tipo_envase'] }} | 
+                Fecha: {{ envase['fecha'] }} | 
+                Cancelado: {{ 'Sí' if envase['cancelado'] else 'No' }}
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

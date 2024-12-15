@@ -1,0 +1,8 @@
+id,cliente,tipo_envase,fecha,cancelado
+1051,Juan Perez,Botella,10,False
+1052,Maria Gomez,Caja,5,True
+1053,carnero,bidon 120 kg,8,True
+1054,Copacabama,bidon 150 kg,,True
+1055,ariadna,bidon 150 kg,,False
+1056,ariadna,bidon 150 kg,,True
+1058,ariadna,bidon 150 kg,2024-12-01,False
