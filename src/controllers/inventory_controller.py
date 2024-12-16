@@ -4,50 +4,84 @@ from datetime import datetime
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
 
+
 def leer_inventario():
-    """Lee todos los registros del archivo CSV y depura los valores de 'id'."""
+    """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales de Python."""
     inventario = []
-    with open(CSV_PATH, mode='r', newline='', encoding='utf-8-sig') as file:  # Usar utf-8-sig para eliminar BOM
+    with open(CSV_PATH, mode='r', newline='', encoding='utf-8-sig') as file:
         reader = csv.DictReader(file, delimiter=',')
-        for row in reader:
-            if not any(row.values()):  # Ignoramos filas completamente vacías
+        
+        for i, row in enumerate(reader, start=1):
+            # Imprimir cada fila cruda antes de procesar
+            print(f"Fila {i} (cruda): {row}")
+            
+            # Saltar filas vacías
+            if not any(row.values()): 
+                print(f"Fila {i} está vacía, se omite.")
                 continue
+            
+            # Conversión de ID (maneja errores si no es entero)
             try:
-                row['fecha'] = row.get('fecha', datetime.today().strftime('%Y-%m-%d'))  # Usar la fecha actual si no tiene valor
-                row['id'] = int(row.get('id', 0))  # Convertir 'id' a entero
+                row['id'] = int(row.get('id', 0))
             except ValueError:
-                row['fecha'] = datetime.today().strftime('%Y-%m-%d')  # Usar la fecha actual si no se puede convertir
-                row['id'] = 0  # Usar 0 si no se puede convertir
+                row['id'] = 0
+            
+            # Conversión de fecha (si está vacía, usa la fecha de hoy)
+            row['fecha'] = row.get('fecha') if row.get('fecha') else datetime.today().strftime('%Y-%m-%d')
+            
+            # Conversión de listas separadas por comas
+            row['guias_remision'] = [item.strip() for item in row.get('guias_remision', '').split(',') if item.strip()]
+            row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
+            row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
+            
+            # Conversión de cancelado a booleano
             row['cancelado'] = row.get('cancelado', 'False').strip().lower() == 'true'
+
+            # Imprimir la fila después de procesar los valores
+            print(f"Fila {i} (procesada): {row}\n")
+            
+            # Agregar la fila procesada al inventario
             inventario.append(row)
+    
+    print("\nInventario final:", inventario)
     return inventario
 
 
-def agregar_envase(cliente, tipo_envase, fecha_hoy=None, cancelado=False):
-    """Agrega un nuevo envase al archivo CSV con la fecha de hoy si no se proporciona fecha."""
-    if fecha_hoy is None or fecha_hoy == '':  # Si fecha_hoy está vacía o no se pasa
-        fecha_hoy = datetime.today().strftime('%Y-%m-%d')  # Usar la fecha actual
 
-    print(f"Fecha antes de escribir: {fecha_hoy}")  # Depuración: Verifica el valor de la fecha
+def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, fecha_hoy=None, cancelado=False):
+    """
+    Agrega un nuevo envase con múltiples guías de remisión, tipos de envases y cantidades.
+    No se realiza ninguna verificación para comprobar si el ID ya existe.
+    """
+    if not fecha_hoy:
+        fecha_hoy = datetime.today().strftime('%Y-%m-%d')
 
-    nuevo_id = obtener_nuevo_id()
+    # Asegurarse de que las listas se guarden como cadenas separadas por comas
+    guias_remision_str = ','.join(guias_remision)
+    tipos_envase_str = ','.join(tipos_envase)
+    cantidades_str = ','.join(map(str, cantidades))
 
-    # Escribe la fila con la fecha correcta
-    with open(CSV_PATH, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([nuevo_id, cliente, tipo_envase, fecha_hoy, 'True' if cancelado else 'False'])
-
-    # Depuración: Verifica que la fila escrita tenga la fecha
-    print(f"Fila agregada: {nuevo_id}, {cliente}, {tipo_envase}, {fecha_hoy}, {'True' if cancelado else 'False'}")
-
-
-
-
-
+    with open(CSV_PATH, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'cancelado'])
+        
+        if file.tell() == 0:  # Escribir encabezado solo si el archivo está vacío
+            writer.writeheader()
+        
+        writer.writerow({
+            'id': nuevo_id,
+            'cliente': cliente,
+            'fecha': fecha_hoy,
+            'guias_remision': guias_remision_str,
+            'tipos_envase': tipos_envase_str,
+            'cantidades': cantidades_str,
+            'cancelado': 'True' if cancelado else 'False'
+        })
+    
+    print(f"Fila agregada: {nuevo_id}, {cliente}, {fecha_hoy}, {guias_remision_str}, {tipos_envase_str}, {cantidades_str}, {'True' if cancelado else 'False'}")
 def obtener_nuevo_id():
     """Obtiene un nuevo ID incremental para el próximo registro."""
     inventario = leer_inventario()
-    ids = [row.get('id', 0) for row in inventario]
+    ids = [row['id'] for row in inventario if isinstance(row['id'], int)]
     return max(ids, default=0) + 1
 
 
@@ -59,16 +93,26 @@ def buscar_envase(id_envase):
             return row
     return None
 
+def buscar_envase_por_guia(guia_remision):
+    """Busca un envase por la Guía de Remisión."""
+    inventario = leer_inventario()
+    for row in inventario:
+        if row['guia_remision'] == guia_remision:
+            return row
+    return None
 
 def eliminar_envase(id_envase):
     """Elimina un envase por su ID."""
     inventario = leer_inventario()
-    nuevos_datos = [row for row in inventario if int(row['id']) != id_envase]
-    with open(CSV_PATH, mode='w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'tipo_envase', 'fecha', 'cancelado'])
+    nuevos_datos = [row for row in inventario if row['id'] != id_envase]
+    with open(CSV_PATH, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=['id', 'guia_remision', 'cliente', 'fecha', 'tipo_envase', 'cancelado'])
         writer.writeheader()
         writer.writerows(nuevos_datos)
 
 
-elm=eliminar_envase(1057
-            )
+
+
+# Para verificar que funciona correctamente
+buscar_envase = buscar_envase(1052)
+print(buscar_envase)
