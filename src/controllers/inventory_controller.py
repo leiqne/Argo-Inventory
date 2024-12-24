@@ -12,35 +12,26 @@ def leer_inventario():
         reader = csv.DictReader(file, delimiter=',')
         
         for i, row in enumerate(reader, start=1):
-            # Imprimir cada fila cruda antes de procesar
             print(f"Fila {i} (cruda): {row}")
-            
-            # Saltar filas vacías
             if not any(row.values()): 
                 print(f"Fila {i} está vacía, se omite.")
                 continue
             
-            # Conversión de ID (maneja errores si no es entero)
             try:
                 row['id'] = int(row.get('id', 0))
             except ValueError:
                 row['id'] = 0
+
+            row['fecha'] = row.get('fecha')
             
-            # Conversión de fecha (si está vacía, usa la fecha de hoy)
-            row['fecha'] = row.get('fecha') if row.get('fecha') else datetime.today().strftime('%Y-%m-%d')
-            
-            # Conversión de listas separadas por comas
             row['guias_remision'] = [item.strip() for item in row.get('guias_remision', '').split(',') if item.strip()]
             row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
             row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
             
-            # Conversión de cancelado a booleano
             row['cancelado'] = row.get('cancelado', 'False').strip().lower() == 'true'
 
-            # Imprimir la fila después de procesar los valores
             print(f"Fila {i} (procesada): {row}\n")
             
-            # Agregar la fila procesada al inventario
             inventario.append(row)
     
     print("\nInventario final:", inventario)

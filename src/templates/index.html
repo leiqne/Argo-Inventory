@@ -33,8 +33,6 @@
         <button type="submit">Guardar</button>
     </form>
     
-    
-
     <h2>Lista de Envases</h2>
     <table>
         <thead>
@@ -54,8 +52,8 @@
                 <td>{{ envase['id'] }}</td>
                 <td>{{ envase['cliente'] }}</td>
                 <td>{{ envase['fecha'] }}</td>
-                <td>{{ ', '.join(envase['guia_remision']) }}</td> 
-                <td>{{ ', '.join(envase['tipo_envase']) }}</td> 
+                <td>{{ envase['guias_remision'] }}</td> 
+                <td>{{ envase['tipos_envase'] }}</td> 
                 <td>{{ ', '.join(envase['cantidades'] | map('string')) }}</td> 
                 <td>{{ 'Sí' if envase['cancelado'] else 'No' }}</td> 
             </tr>
@@ -63,9 +61,5 @@
         </tbody>
     </table>
     
-    
-    
-
-
 </body>
 </html>
