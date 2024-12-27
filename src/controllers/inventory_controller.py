@@ -1,6 +1,10 @@
 import csv
 import os
 from datetime import datetime
+import pandas as pd
+from pathlib import Path
+
+path_data = Path(__file__).parent.parent / "data"
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
 
@@ -47,6 +51,52 @@ def leer_inventario():
     return inventario
 
 
+
+def get_csv_cliente(client_name):
+    """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales de Python."""
+    inventario = []
+    with open(path_data / f"{client_name}.csv", mode='r', newline='', encoding='utf-8-sig') as file:
+        reader = csv.DictReader(file, delimiter=',')
+        
+        for i, row in enumerate(reader, start=1):
+            # Imprimir cada fila cruda antes de procesar
+            print(f"Fila {i} (cruda): {row}")
+            
+            # Saltar filas vacías
+            if not any(row.values()): 
+                print(f"Fila {i} está vacía, se omite.")
+                continue
+            
+            # Conversión de ID (maneja errores si no es entero)
+            try:
+                row['id'] = int(row.get('id', 0))
+            except ValueError:
+                row['id'] = 0
+            
+            # Conversión de fecha (si está vacía, usa la fecha de hoy)
+            row['fecha'] = row.get('fecha') if row.get('fecha') else datetime.today().strftime('%Y-%m-%d')
+            
+            # Conversión de listas separadas por comas
+            row['guias_remision'] = [item.strip() for item in row.get('guias_remision', '').split(',') if item.strip()]
+            row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
+            row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
+            
+            # Conversión de cancelado a booleano
+            row['estado'] = row.get('estado', 'False').strip()
+
+            # Imprimir la fila después de procesar los valores
+            print(f"Fila {i} (procesada): {row}\n")
+            
+            # Agregar la fila procesada al inventario
+            inventario.append(row)
+    
+    print("\nInventario final:", inventario)
+    return inventario
+
+
+def add_cliente(client_name):
+    df = pd.DataFrame(columns=['id', 'guia_remision', 'fecha', 'tipo_envase', 'estado'])
+    df.to_csv(path_data / f"{client_name}.csv", index=False)
 
 def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, fecha_hoy=None, cancelado=False):
     """
