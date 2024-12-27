@@ -98,6 +98,10 @@ def add_cliente(client_name):
     df = pd.DataFrame(columns=['id', 'guia_remision', 'fecha', 'tipo_envase', 'estado'])
     df.to_csv(path_data / f"{client_name}.csv", index=False)
 
+
+def listar_clientes():
+    return [file.stem for file in path_data.glob("*.csv") if file.stem != "inventario"]
+
 def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, fecha_hoy=None, cancelado=False):
     """
     Agrega un nuevo envase con múltiples guías de remisión, tipos de envases y cantidades.

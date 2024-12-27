@@ -1,4 +1,5 @@
 window.onload = init
+let currentClienteId = null;
 
 function init() {
     const contextMenu = document.getElementById('context-menu');
@@ -9,11 +10,11 @@ function init() {
 
 
     btnAddCliente.addEventListener('click', ()=> {
-        console.log("click")
         ModalAddCliente.classList.toggle('hidden')
     })
 
-    formAddCliente.addEventListener('submit', async ()=>{
+    formAddCliente.addEventListener('submit', async (e)=>{
+        e.preventDefault();
         const data = Object.fromEntries(new FormData(formAddCliente).entries());
 
         const req = await fetch('/add-cliente', {
@@ -32,6 +33,7 @@ function init() {
             e.preventDefault();
 
             const clienteId = item.dataset.cliente;
+            currentClienteId = clienteId;
             console.log('Cliente seleccionado:', clienteId);
 
             // Posiciona el menú en el cursor
@@ -46,15 +48,14 @@ function init() {
     // Ocultar el menú al hacer clic en cualquier parte
     document.addEventListener('click', () => {
         contextMenu.classList.add('hidden');
+        currentClienteId = null;
     });
 
     // Manejar las acciones del menú
     contextMenu.addEventListener('click', (e) => {
         const action = e.target.dataset.action;
         if (action) {
-            console.log('Acción seleccionada:', action);
-            // Aquí puedes manejar cada acción
-            // Por ejemplo, abrir un modal o redirigir
+            if (action === 'pendientes') location.href = '/pendientes/' + currentClienteId;
         }
         contextMenu.classList.add('hidden'); // Cierra el menú tras seleccionar
     });

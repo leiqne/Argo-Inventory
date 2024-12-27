@@ -1,19 +1,23 @@
 from flask import Blueprint, request, render_template, redirect
-from ..controllers.inventory_controller import leer_inventario, agregar_envase, obtener_nuevo_id, get_csv_cliente
+from ..controllers.inventory_controller import leer_inventario, agregar_envase, obtener_nuevo_id, get_csv_cliente, add_cliente, listar_clientes
 from datetime import datetime
 
 app_router = Blueprint("app_router", __file__)
 
 @app_router.get("/")
 def index():
-    envases = leer_inventario()
-    return render_template('index.html', envases=envases, zip=zip)
+    clientes = listar_clientes()
+    return render_template('index.html', clientes=clientes, zip=zip)
 
-@app_router.get("/get-pendientes/<string:client_name>")
+@app_router.get("/inventario")
+def inventario():
+    envases = leer_inventario()
+    return render_template('inventario.html', envases=envases, zip=zip, path=[{'name': 'inventario', 'url':'#'}])
+
+@app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
     data = filter(lambda x: x["estado"] == "pendiente", get_csv_cliente(client_name))
     return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'pendientes', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=data, zip=zip)
-
 
 
 @app_router.route('/agregar_envase', methods=['POST'])
@@ -32,3 +36,8 @@ def agregar_envase_route():
     agregar_envase(id, cliente, guia_remision, tipos_envase, cantidades, fecha, cancelado) 
     return redirect('/')
 
+@app_router.post('/add-cliente')
+def agregar_cliente_route():
+    client_name = request.json.get('client_name')
+    add_cliente(client_name)
+    return {"status": True, "message": "Cliente agregado correctamente"}
