@@ -1,8 +1,7 @@
 id,cliente,fecha,guias_remision,tipos_envase,cantidades,cancelado
-674,Hialpesa,2022-07-01,"0003-000215,0003-00216","bidon 150 kg, ibc","2,1",True
-675,Hialpesa,2024-12-10,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
-676,Hialpesa,2024-12-16,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
-677,Hialpesa,2024-12-02,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
-678,Hialpesa,2024-12-16,0003-000215,"bidon 150 kg, ibc","2,5",False
-679,Hialpesa,2024-12-16,0003-000215,bidon 150 kg,"2,5",False
-680,Hialpesa,2024-12-16,0003-000215,bidon 150 kg,2,False
+
+674,Hialpesa,2022-07-01,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",True
+674,Hialpesa,2024-12-10,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
+674,Hialpesa,2024-12-16,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
+674,Hialpesa,2024-12-02,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
+674,Hialpesa,2024-12-01,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
