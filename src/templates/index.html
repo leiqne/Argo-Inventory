@@ -33,42 +33,27 @@
         </div>
     </section>
 
-    <div id="ModalAddCliente" class="w-1/2 h-auto p-3 flex m-auto hidden absolute">
-        <section class="w-auto p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
-            <form id="formAddCliente">
-                <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-3">
-                    <div class="col-span-3">
-                        <label class="text-gray-700 dark:text-gray-200" for="client-name">Nombre del cliente</label>
-                        <input id="client-name" type="text" name="client_name"
-                            class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-                    </div>
+    <div id="ModalAddCliente" 
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+   <section class="w-auto p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
+       <form id="formAddCliente">
+           <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-3">
+               <div class="col-span-3">
+                   <label class="text-gray-700 dark:text-gray-200" for="client-name">Nombre del cliente</label>
+                   <input id="client-name" type="text" name="client_name"
+                       class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+               </div>
+           </div>
+           <div class="flex justify-end mt-6">
+               <button type="button" id="btnCloseModal"
+                   class="px-4 py-2 mr-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none">Cancelar</button>
+               <button
+                   class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Guardar</button>
+           </div>
+       </form>
+   </section>
+</div>
 
-                    <div>
-                        <label class="text-gray-700 dark:text-gray-200" for="tipo1">Tipo 1</label>
-                        <input type="number" name="tipo1"
-                            class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-                    </div>
-
-                    <div>
-                        <label class="text-gray-700 dark:text-gray-200" for="tipo2">Tipo 2</label>
-                        <input type="number" name="tipo2"
-                            class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-                    </div>
-
-                    <div>
-                        <label class="text-gray-700 dark:text-gray-200" for="tipo3">Tipo 3</label>
-                        <input type="number" name="tipo3"
-                            class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-                    </div>
-                </div>
-
-                <div class="flex justify-end mt-6">
-                    <button
-                        class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Guardar</button>
-                </div>
-            </form>
-        </section>
-    </div>
 
     <div id="ModalRegistro" class="hidden">
         <h1>Inventario de Envases</h1>

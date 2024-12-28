@@ -1,4 +1,4 @@
-window.onload = init
+window.onload = init;
 let currentClienteId = null;
 
 function init() {
@@ -7,28 +7,70 @@ function init() {
     const ModalAddCliente = document.getElementById('ModalAddCliente');
     const formAddCliente = document.getElementById('formAddCliente');
     const btnAddCliente = document.getElementById('btnAddCliente');
+    const btnCloseModal = document.getElementById('btnCloseModal'); // Botón cancelar
 
+    formAddCliente.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(formAddCliente).entries());
+    
+        try {
+            const req = await fetch('/add-cliente', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+    
+            if (req.ok) {
+                const res = await req.json();
+                alert('Cliente guardado exitosamente');
+                console.log('Respuesta del servidor:', res);
+    
+                // Cierra la ventana modal
+                ModalAddCliente.classList.add('hidden');
+            } else {
+                alert('Hubo un error al guardar el cliente');
+            }
+        } catch (error) {
+            console.error('Error al guardar el cliente:', error);
+            alert('Error inesperado al guardar el cliente');
+        }
+    });
+    
 
-    btnAddCliente.addEventListener('click', ()=> {
-        ModalAddCliente.classList.toggle('hidden')
-    })
+    // Mostrar el modal al hacer clic en "Agregar Cliente"
+    btnAddCliente.addEventListener('click', () => {
+        ModalAddCliente.classList.remove('hidden');
+    });
 
-    formAddCliente.addEventListener('submit', async (e)=>{
+    // Cerrar el modal al hacer clic en "Cancelar"
+    btnCloseModal.addEventListener('click', () => {
+        ModalAddCliente.classList.add('hidden');
+    });
+
+    // Enviar el formulario al servidor
+    formAddCliente.addEventListener('submit', async (e) => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(formAddCliente).entries());
 
         const req = await fetch('/add-cliente', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         });
+
         const res = await req.json();
         console.log('Respuesta del servidor:', res);
-    })
 
-    clienteItems.forEach(item => {
+        // Cerrar el modal después de enviar
+        ModalAddCliente.classList.add('hidden');
+    });
+
+    // Mostrar el menú contextual
+    clienteItems.forEach((item) => {
         item.addEventListener('contextmenu', (e) => {
             e.preventDefault();
 
@@ -36,27 +78,27 @@ function init() {
             currentClienteId = clienteId;
             console.log('Cliente seleccionado:', clienteId);
 
-            // Posiciona el menú en el cursor
+            // Posicionar el menú en el cursor
             contextMenu.style.top = `${e.clientY}px`;
             contextMenu.style.left = `${e.clientX}px`;
 
-            // Muestra el menú
+            // Mostrar el menú
             contextMenu.classList.remove('hidden');
         });
     });
 
-    // Ocultar el menú al hacer clic en cualquier parte
+    // Ocultar el menú contextual al hacer clic fuera
     document.addEventListener('click', () => {
         contextMenu.classList.add('hidden');
         currentClienteId = null;
     });
 
-    // Manejar las acciones del menú
+    // Manejar acciones del menú contextual
     contextMenu.addEventListener('click', (e) => {
         const action = e.target.dataset.action;
         if (action) {
             if (action === 'pendientes') location.href = '/pendientes/' + currentClienteId;
         }
-        contextMenu.classList.add('hidden'); // Cierra el menú tras seleccionar
+        contextMenu.classList.add('hidden'); // Cerrar el menú después de seleccionar
     });
 }

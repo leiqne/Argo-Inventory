@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect
+from flask import Blueprint, request, render_template, redirect, jsonify
 from ..controllers.inventory_controller import leer_inventario, agregar_envase, obtener_nuevo_id, get_csv_cliente, add_cliente, listar_clientes
 from datetime import datetime
 
@@ -7,6 +7,7 @@ app_router = Blueprint("app_router", __file__)
 @app_router.get("/")
 def index():
     clientes = listar_clientes()
+    print (f"clientes", clientes)
     return render_template('index.html', clientes=clientes, zip=zip)
 
 @app_router.get("/inventario")
@@ -38,6 +39,17 @@ def agregar_envase_route():
 
 @app_router.post('/add-cliente')
 def agregar_cliente_route():
-    client_name = request.json.get('client_name')
-    add_cliente(client_name)
-    return {"status": True, "message": "Cliente agregado correctamente"}
+    try:
+        # Obtén los datos del cliente desde la solicitud
+        data = request.get_json()
+        client_name = data.get('client_name')
+
+        if not client_name:
+            return jsonify({'error': 'El nombre del cliente es obligatorio'}), 400
+
+        # Llama a la función add_cliente
+        add_cliente(client_name)
+        return jsonify({'message': 'Cliente agregado exitosamente'}), 200
+    except Exception as e:
+        print(f"Error al agregar cliente: {e}")
+        return jsonify({'error': 'Error al agregar el cliente'}), 500

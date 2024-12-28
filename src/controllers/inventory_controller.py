@@ -16,12 +16,9 @@ def leer_inventario():
         reader = csv.DictReader(file, delimiter=',')
         
         for i, row in enumerate(reader, start=1):
-            # Imprimir cada fila cruda antes de procesar
-            print(f"Fila {i} (cruda): {row}")
             
             # Saltar filas vacías
             if not any(row.values()): 
-                print(f"Fila {i} está vacía, se omite.")
                 continue
             
             # Conversión de ID (maneja errores si no es entero)
@@ -40,14 +37,9 @@ def leer_inventario():
             
             # Conversión de cancelado a booleano
             row['cancelado'] = row.get('cancelado', 'False').strip().lower() == 'true'
-
-            # Imprimir la fila después de procesar los valores
-            print(f"Fila {i} (procesada): {row}\n")
             
             # Agregar la fila procesada al inventario
             inventario.append(row)
-    
-    print("\nInventario final:", inventario)
     return inventario
 
 
@@ -59,12 +51,8 @@ def get_csv_cliente(client_name):
         reader = csv.DictReader(file, delimiter=',')
         
         for i, row in enumerate(reader, start=1):
-            # Imprimir cada fila cruda antes de procesar
-            print(f"Fila {i} (cruda): {row}")
-            
             # Saltar filas vacías
             if not any(row.values()): 
-                print(f"Fila {i} está vacía, se omite.")
                 continue
             
             # Conversión de ID (maneja errores si no es entero)
@@ -84,13 +72,10 @@ def get_csv_cliente(client_name):
             # Conversión de cancelado a booleano
             row['estado'] = row.get('estado', 'False').strip()
 
-            # Imprimir la fila después de procesar los valores
-            print(f"Fila {i} (procesada): {row}\n")
             
             # Agregar la fila procesada al inventario
             inventario.append(row)
     
-    print("\nInventario final:", inventario)
     return inventario
 
 
@@ -131,7 +116,6 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
             'cancelado': 'True' if cancelado else 'False'
         })
     
-    print(f"Fila agregada: {nuevo_id}, {cliente}, {fecha_hoy}, {guias_remision_str}, {tipos_envase_str}, {cantidades_str}, {'True' if cancelado else 'False'}")
 def obtener_nuevo_id():
     """Obtiene un nuevo ID incremental para el próximo registro."""
     inventario = leer_inventario()
@@ -164,9 +148,3 @@ def eliminar_envase(id_envase):
         writer.writeheader()
         writer.writerows(nuevos_datos)
 
-
-
-
-# Para verificar que funciona correctamente
-buscar_envase = buscar_envase(1052)
-print(buscar_envase)
