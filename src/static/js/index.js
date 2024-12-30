@@ -8,11 +8,67 @@ function init() {
     const formAddCliente = document.getElementById('formAddCliente');
     const btnAddCliente = document.getElementById('btnAddCliente');
     const btnCloseModal = document.getElementById('btnCloseModal'); // Botón cancelar
+    const ModalRegistroDevolucion = document.getElementById('ModalRegistroDevolucion');
+    const formRegistroDevolucion = document.getElementById('formRegistroDevolucion');
+    const btnCloseModalRegistroDevolucion = document.getElementById('btnCloseModalRegistroDevolucion');
+    const devolucionClienteInput = document.getElementById('devolucion-cliente');
+
+    // Mostrar el modal "Añadir Registro de Devolución"
+    contextMenu.addEventListener('click', (e) => {
+        const action = e.target.dataset.action;
+        if (action === 'add') {
+            if (currentClienteId) {
+                // Autocompletar cliente
+                devolucionClienteInput.value = currentClienteId;
+
+                // Mostrar modal
+                ModalRegistroDevolucion.classList.remove('hidden');
+            } else {
+                alert('Seleccione un cliente válido.');
+            }
+        }
+    });
+
+    // Cerrar el modal
+    btnCloseModalRegistroDevolucion.addEventListener('click', () => {
+        ModalRegistroDevolucion.classList.add('hidden');
+    });
+    ModalRegistroDevolucion.addEventListener('click', (e) => {
+        if (e.target === ModalRegistroDevolucion) {
+            ModalRegistroDevolucion.classList.add('hidden');
+        }
+    });
+
+    // Enviar datos del formulario al servidor
+    formRegistroDevolucion.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(formRegistroDevolucion).entries());
+    console.log('Datos enviados:', data);
+    try {
+        const req = await fetch('/add-devolucion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (req.ok) {
+            alert('Registro de devolución guardado exitosamente');
+            ModalRegistroDevolucion.classList.add('hidden');
+        } else {
+            alert('Hubo un error al guardar el registro.');
+        }
+    } catch (error) {
+        console.error('Error al guardar el registro:', error);
+        alert('Error inesperado al guardar el registro.');
+    }
+    });
 
     formAddCliente.addEventListener('submit', async (e) => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(formAddCliente).entries());
-    
+        console.log('Datos enviados:', data);
         try {
             const req = await fetch('/add-cliente', {
                 method: 'POST',

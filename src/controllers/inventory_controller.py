@@ -41,7 +41,7 @@ def leer_inventario():
 
 
 def get_csv_cliente(client_name):
-    """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales de Python."""
+    """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales"""
     inventario = []
     with open(path_data / f"{client_name}.csv", mode='r', newline='', encoding='utf-8-sig') as file:
         reader = csv.DictReader(file, delimiter=',')
@@ -75,8 +75,9 @@ def get_csv_cliente(client_name):
 
 
 def add_cliente(client_name):
-    df = pd.DataFrame(columns=['id', 'guia_remision', 'fecha', 'tipo_envase', 'estado'])
+    df = pd.DataFrame(columns=['id','cliente','fecha','guias_remision','tipos_envase','cantidades','cancelado'])
     df.to_csv(path_data / f"{client_name}.csv", index=False)
+
 
 
 def listar_clientes():

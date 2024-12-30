@@ -55,33 +55,94 @@
 </div>
 
 
-    <div id="ModalRegistro" class="hidden">
-        <h1>Inventario de Envases</h1>
-        <form action="/agregar_envase" method="post">
-            <label for="id">Guía de envases (ID):</label>
-            <input type="text" id="id" name="id" placeholder="Dejar vacío para ID automático">
+<div id="ModalRegistroDevolucion" 
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+    <section class="w-auto p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
+        <form id="formRegistroDevolucion">
+            <h2 class="text-lg font-medium text-gray-700 dark:text-gray-200 mb-4">Añadir Registro de Devolución</h2>
+            <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+                <!-- Cliente (autocompletado) -->
+                <div class="col-span-2">
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-cliente">Cliente</label>
+                    <input id="devolucion-cliente" type="text" name="cliente" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-200 border rounded-md cursor-not-allowed focus:outline-none" 
+                        readonly>
+                </div>
 
-            <label for="cliente">Nombre del cliente:</label>
-            <input type="text" id="cliente" name="cliente" required>
+                <!-- ID -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-id">ID</label>
+                    <input id="devolucion-id" type="text" name="id" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                </div>
 
-            <label for="guia_remision">Guías de Remisión (separar por comas):</label>
-            <input type="text" id="guia_remision" name="guia_remision" required>
+                <!-- Fecha -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-fecha">Fecha</label>
+                    <input id="devolucion-fecha" type="date" name="fecha" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                </div>
 
-            <label for="tipo_envase">Tipos de envases (separar por comas):</label>
-            <input type="text" id="tipo_envase" name="tipo_envase" required>
+                <!-- Guías de Remisión -->
+                <div class="col-span-2">
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-guias">Guías de Remisión</label>
+                    <input id="devolucion-guias" type="text" name="guias_remision" 
+                        placeholder="Separar por comas" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                </div>
 
-            <label for="cantidades">Cantidad de cada tipo (separar por comas):</label>
-            <input type="text" id="cantidades" name="cantidades" placeholder="Ejemplo: 2,5" required>
+                <!-- Tipos de Envase (checkboxes) -->
+                    <div class="col-span-2">
+                        <label class="text-gray-700 dark:text-gray-200">Tipos de Envase</label>
+                        <div class="flex flex-col space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 120 kgs" class="mr-2 rounded">
+                                Bidon plastico 120 kgs
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 150 kgs" class="mr-2 rounded">
+                                Bidon plastico 150 kgs
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 60 kgs" class="mr-2 rounded">
+                                Bidon plastico 60 kgs
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="IBC" class="mr-2 rounded">
+                                IBC
+                            </label>
+                        </div>
+                    </div>
 
-            <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" name="fecha">
+                <!-- Cantidades -->
+                <div class="col-span-2">
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-cantidades">Cantidades</label>
+                    <input id="devolucion-cantidades" type="text" name="cantidades" 
+                        placeholder="Ejemplo: 2,5" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                </div>
 
-            <label for="cancelado">Cancelado:</label>
-            <input type="checkbox" id="cancelado" name="cancelado">
+                <!-- Estado -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-estado">Estado</label>
+                    <select id="devolucion-estado" name="estado" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Anulado">Anulado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+            </div>
 
-            <button type="submit">Guardar</button>
+            <div class="flex justify-end mt-6">
+                <button type="button" id="btnCloseModalRegistroDevolucion"
+                    class="px-4 py-2 mr-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none">Cancelar</button>
+                <button
+                    class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Guardar</button>
+            </div>
         </form>
-    </div>
+    </section>
+</div>
+
 </main>
 <!-- Menú contextual -->
 <div id="context-menu"

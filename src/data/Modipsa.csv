@@ -1,1 +1,6 @@
-id,guia_remision,fecha,tipo_envase,estado
+id,cliente,fecha,guias_remision,tipos_envase,cantidades,cancelado
+674,Modipsa,2022-07-01,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",cancelado
+674,Modipsa,2024-12-10,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",pendiente
+674,Modipsa,2024-12-16,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",pendiente
+674,Modipsa,2024-12-02,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",cancelado
+674,Modipsa,2024-12-01,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",pendiente

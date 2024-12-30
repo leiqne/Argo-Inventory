@@ -21,21 +21,28 @@ def get_peendiente_by_client(client_name:str):
     return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'pendientes', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=data, zip=zip)
 
 
-@app_router.route('/agregar_envase', methods=['POST'])
-def agregar_envase_route():
-    id = request.form['id'].strip() 
-    if not id:
-        id = obtener_nuevo_id()  
+@app_router.post('/add-devolucion')
+def agregar_devolucion_route():
+    try:
+        # Obtén los datos del registro de devolución desde la solicitud
+        data = request.get_json()
+        print(f"Datos recibidos: {data}")
+        cliente = data.get('cliente')
+        guia_remision = data.get('guia_remision')
+        tipo_envase = data.get('tipo_envase')
+        cantidad = data.get('cantidad')
+        fecha = data.get('fecha')
+        
+        if not cliente or not guia_remision or not tipo_envase or not cantidad:
+            return jsonify({'error': 'Todos los campos son obligatorios'}), 400
 
-    cliente = request.form['cliente']
-    guia_remision = request.form['guia_remision'].split(',')  # Separar por comas
-    tipos_envase = request.form['tipo_envase'].split(',')  # Separar por comas
-    cantidades = list(map(int, request.form['cantidades'].split(',')))  # Separar por comas y convertir a enteros
-    fecha = request.form['fecha'].strip() if request.form['fecha'].strip() else datetime.today().strftime('%Y-%m-%d')
-    cancelado = 'cancelado' in request.form
-
-    agregar_envase(id, cliente, guia_remision, tipos_envase, cantidades, fecha, cancelado) 
-    return redirect('/')
+        # Procesar y agregar lógica de negocio aquí
+        print(f"Datos recibidos: {data}")
+        
+        return jsonify({'message': 'Registro de devolución agregado exitosamente'}), 200
+    except Exception as e:
+        print(f"Error al agregar devolución: {e}")
+        return jsonify({'error': 'Error al procesar el registro de devolución'}), 500
 
 @app_router.post('/add-cliente')
 def agregar_cliente_route():
