@@ -5,3 +5,4 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,cancelado
 674,Hialpesa,2024-12-16,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
 674,Hialpesa,2024-12-02,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
 674,Hialpesa,2024-12-01,"0003-000215,0003-00216","bidon 150 kg, ibc","2,5",False
+683,Hialpesa,2024-12-04,0003-000375,"Bidon plastico 120 kgs,Bidon plastico 150 kgs,Bidon plastico 60 kgs","2,5,8",Pendiente

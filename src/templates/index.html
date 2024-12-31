@@ -92,35 +92,39 @@
                 </div>
 
                 <!-- Tipos de Envase (checkboxes) -->
-                    <div class="col-span-2">
-                        <label class="text-gray-700 dark:text-gray-200">Tipos de Envase</label>
-                        <div class="flex flex-col space-y-2">
-                            <label class="flex items-center">
-                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 120 kgs" class="mr-2 rounded">
-                                Bidon plastico 120 kgs
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 150 kgs" class="mr-2 rounded">
-                                Bidon plastico 150 kgs
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 60 kgs" class="mr-2 rounded">
-                                Bidon plastico 60 kgs
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" name="tipos_envase" value="IBC" class="mr-2 rounded">
-                                IBC
-                            </label>
-                        </div>
+                <div class="col-span-2">
+                    <label class="text-gray-700 dark:text-gray-200">Tipos de Envase</label>
+                    <div class="text-gray-200 grid grid-cols-2 gap-2 mt-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="tipos_envase" value="Bidon plastico 120 kgs" class="mr-2 rounded text-blue-600">
+                            Bidon plastico 120 kgs
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="tipos_envase" value="Bidon plastico 150 kgs" class="mr-2 rounded text-blue-600">
+                            Bidon plastico 150 kgs
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="tipos_envase" value="Bidon plastico 60 kgs" class="mr-2 rounded text-blue-600">
+                            Bidon plastico 60 kgs
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="tipos_envase" value="IBC" class="mr-2 rounded text-blue-600">
+                            IBC
+                        </label>
                     </div>
+                </div>
+                
 
                 <!-- Cantidades -->
                 <div class="col-span-2">
                     <label class="text-gray-700 dark:text-gray-200" for="devolucion-cantidades">Cantidades</label>
-                    <input id="devolucion-cantidades" type="text" name="cantidades" 
-                        placeholder="Ejemplo: 2,5" 
+                    <input id="devolucion-cantidades" type="number" name="cantidades" 
+                        placeholder="Ejemplo: 2, 5" 
+                        min="0"
+                        step="1"
                         class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
                 </div>
+
 
                 <!-- Estado -->
                 <div>

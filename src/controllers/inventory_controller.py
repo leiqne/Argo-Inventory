@@ -32,7 +32,7 @@ def leer_inventario():
             row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
             row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
             
-            row['cancelado'] = row.get('cancelado', 'False').strip().lower() == 'true'
+            row['estado'] = row.get('estado', 'False').strip().lower() == 'true'
             
             # Agregar la fila procesada al inventario
             inventario.append(row)
@@ -65,7 +65,7 @@ def get_csv_cliente(client_name):
             row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
             row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
             
-            # Conversión de cancelado a booleano
+            # Conversión de estado a booleano
             row['estado'] = row.get('estado', 'False').strip()
 
             
@@ -75,7 +75,7 @@ def get_csv_cliente(client_name):
 
 
 def add_cliente(client_name):
-    df = pd.DataFrame(columns=['id','cliente','fecha','guias_remision','tipos_envase','cantidades','cancelado'])
+    df = pd.DataFrame(columns=['id','cliente','fecha','guias_remision','tipos_envase','cantidades','estado'])
     df.to_csv(path_data / f"{client_name}.csv", index=False)
 
 
@@ -83,21 +83,22 @@ def add_cliente(client_name):
 def listar_clientes():
     return [file.stem for file in path_data.glob("*.csv") if file.stem != "inventario"]
 
-def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, fecha_hoy=None, cancelado=False):
+def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, fecha_hoy=None, estado='pendiente'):
     """
     Agrega un nuevo envase con múltiples guías de remisión, tipos de envases y cantidades.
     No se realiza ninguna verificación para comprobar si el ID ya existe.
     """
     if not fecha_hoy:
         fecha_hoy = datetime.today().strftime('%Y-%m-%d')
-
+        
+    cantidades = [int(float(c)) for c in cantidades]
     # Asegurarse de que las listas se guarden como cadenas separadas por comas
     guias_remision_str = ','.join(guias_remision)
     tipos_envase_str = ','.join(tipos_envase)
     cantidades_str = ','.join(map(str, cantidades))
 
     with open(CSV_PATH, mode='a', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'cancelado'])
+        writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
         
         if file.tell() == 0:  # Escribir encabezado solo si el archivo está vacío
             writer.writeheader()
@@ -109,7 +110,7 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
             'guias_remision': guias_remision_str,
             'tipos_envase': tipos_envase_str,
             'cantidades': cantidades_str,
-            'cancelado': 'True' if cancelado else 'False'
+            'estado': estado
         })
     
 def obtener_nuevo_id():
@@ -140,7 +141,7 @@ def eliminar_envase(id_envase):
     inventario = leer_inventario()
     nuevos_datos = [row for row in inventario if row['id'] != id_envase]
     with open(CSV_PATH, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=['id', 'guia_remision', 'cliente', 'fecha', 'tipo_envase', 'cancelado'])
+        writer = csv.DictWriter(file, fieldnames=['id', 'guia_remision', 'cliente', 'fecha', 'tipo_envase', 'estado'])
         writer.writeheader()
         writer.writerows(nuevos_datos)
 

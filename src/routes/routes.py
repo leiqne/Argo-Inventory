@@ -27,22 +27,49 @@ def agregar_devolucion_route():
         # Obtén los datos del registro de devolución desde la solicitud
         data = request.get_json()
         print(f"Datos recibidos: {data}")
+
+        # Extraer datos de la solicitud
         cliente = data.get('cliente')
-        guia_remision = data.get('guia_remision')
-        tipo_envase = data.get('tipo_envase')
-        cantidad = data.get('cantidad')
+        nuevo_id = data.get('id')
         fecha = data.get('fecha')
-        
-        if not cliente or not guia_remision or not tipo_envase or not cantidad:
+        guias_remision = data.get('guias_remision')
+        tipos_envase = data.get('tipos_envase')
+        cantidades = data.get('cantidades')
+        estado = data.get('estado')  # Valor predeterminado 'Pendiente'
+
+        # Validar los campos obligatorios
+        if not cliente or not nuevo_id or not fecha or not guias_remision or not tipos_envase or not cantidades:
             return jsonify({'error': 'Todos los campos son obligatorios'}), 400
 
-        # Procesar y agregar lógica de negocio aquí
-        print(f"Datos recibidos: {data}")
-        
+        # Convertir listas en caso de que sean cadenas separadas por comas
+        if isinstance(guias_remision, str):
+            guias_remision = guias_remision.split(',')
+        if isinstance(tipos_envase, str):
+            tipos_envase = tipos_envase.split(',')
+        if isinstance(cantidades, str):
+            cantidades = list(map(float, cantidades.split(',')))
+
+        # Verificar que la longitud de tipos_envase y cantidades coincidan
+        if len(tipos_envase) != len(cantidades):
+            return jsonify({'error': 'La cantidad de tipos de envase no coincide con las cantidades proporcionadas'}), 400
+
+        # Agregar registro al CSV
+        agregar_envase(
+            nuevo_id=nuevo_id,
+            cliente=cliente,
+            guias_remision=guias_remision,
+            tipos_envase=tipos_envase,
+            cantidades=cantidades,
+            fecha_hoy=fecha,
+            estado=estado
+        )
+
         return jsonify({'message': 'Registro de devolución agregado exitosamente'}), 200
+
     except Exception as e:
         print(f"Error al agregar devolución: {e}")
-        return jsonify({'error': 'Error al procesar el registro de devolución'}), 500
+        return jsonify({'error': 'Hubo un error al guardar el registro de devolución'}), 500
+
 
 @app_router.post('/add-cliente')
 def agregar_cliente_route():

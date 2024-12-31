@@ -41,29 +41,52 @@ function init() {
 
     // Enviar datos del formulario al servidor
     formRegistroDevolucion.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(formRegistroDevolucion).entries());
-    console.log('Datos enviados:', data);
-    try {
-        const req = await fetch('/add-devolucion', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (req.ok) {
-            alert('Registro de devolución guardado exitosamente');
-            ModalRegistroDevolucion.classList.add('hidden');
-        } else {
-            alert('Hubo un error al guardar el registro.');
+        e.preventDefault();
+    
+        // Validar cantidades
+        const cantidadesInput = document.getElementById('devolucion-cantidades');
+        const cantidades = cantidadesInput.value.split(',').map(c => c.trim());
+    
+        // Verificar si todos los valores son enteros positivos
+        if (!cantidades.every(c => /^\d+$/.test(c))) {
+            alert('Las cantidades deben ser números enteros positivos separados por comas.');
+            return;
         }
-    } catch (error) {
-        console.error('Error al guardar el registro:', error);
-        alert('Error inesperado al guardar el registro.');
-    }
+    
+        // Crear el objeto de datos
+        const data = Object.fromEntries(new FormData(formRegistroDevolucion).entries());
+    
+        // Agregar los tipos de envase seleccionados
+        const tiposEnvase = Array.from(
+            document.querySelectorAll('input[name="tipos_envase"]:checked')
+        ).map(checkbox => checkbox.value);
+    
+        data.tipos_envase = tiposEnvase;
+        data.cantidades = cantidades; // Asegurar que se envían los números enteros
+    
+        console.log('Datos enviados:', data);
+    
+        try {
+            const req = await fetch('/add-devolucion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+    
+            if (req.ok) {
+                alert('Registro de devolución guardado exitosamente');
+                ModalRegistroDevolucion.classList.add('hidden');
+            } else {
+                alert('Hubo un error al guardar el registro.');
+            }
+        } catch (error) {
+            console.error('Error al guardar el registro:', error);
+            alert('Error inesperado al guardar el registro.');
+        }
     });
+    
 
     formAddCliente.addEventListener('submit', async (e) => {
         e.preventDefault();
