@@ -94,45 +94,53 @@
                 <!-- Tipos de Envase (checkboxes) -->
                 <div class="col-span-2">
                     <label class="text-gray-700 dark:text-gray-200">Tipos de Envase</label>
-                    <div class="text-gray-200 grid grid-cols-2 gap-2 mt-2">
-                        <label class="flex items-center">
-                            <input type="checkbox" name="tipos_envase" value="Bidon plastico 120 kgs" class="mr-2 rounded text-blue-600">
-                            Bidon plastico 120 kgs
+                    <div class="text-gray-200 flex flex-col gap-2 mt-2">
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 120 kgs" class="mr-2 rounded text-blue-600">
+                                Bidon plastico 120 kgs
+                            </div>
+                            <input type="number" name="cantidad_bidon_120" min="0" step="1"
+                                placeholder="Cantidad" 
+                                class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
                         </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="tipos_envase" value="Bidon plastico 150 kgs" class="mr-2 rounded text-blue-600">
-                            Bidon plastico 150 kgs
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 150 kgs" class="mr-2 rounded text-blue-600">
+                                Bidon plastico 150 kgs
+                            </div>
+                            <input type="number" name="cantidad_bidon_150" min="0" step="1"
+                                placeholder="Cantidad" 
+                                class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" >
                         </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="tipos_envase" value="Bidon plastico 60 kgs" class="mr-2 rounded text-blue-600">
-                            Bidon plastico 60 kgs
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 60 kgs" class="mr-2 rounded text-blue-600">
+                                Bidon plastico 60 kgs
+                            </div>
+                            <input type="number" name="cantidad_bidon_60" min="0" step="1"
+                                placeholder="Cantidad" 
+                                class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
                         </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="tipos_envase" value="IBC" class="mr-2 rounded text-blue-600">
-                            IBC
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="IBC" class="mr-2 rounded text-blue-600">
+                                IBC
+                            </div>
+                            <input type="number" name="cantidad_ibc" min="0" step="1"
+                                placeholder="Cantidad" 
+                                class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
                         </label>
                     </div>
                 </div>
-                
-
-                <!-- Cantidades -->
-                <div class="col-span-2">
-                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-cantidades">Cantidades</label>
-                    <input id="devolucion-cantidades" type="number" name="cantidades" 
-                        placeholder="Ejemplo: 2, 5" 
-                        min="0"
-                        step="1"
-                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-                </div>
-
 
                 <!-- Estado -->
                 <div>
                     <label class="text-gray-700 dark:text-gray-200" for="devolucion-estado">Estado</label>
                     <select id="devolucion-estado" name="estado" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="Anulado">Anulado</option>
-                        <option value="Cancelado">Cancelado</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="anulado">Anulado</option>
+                        <option value="cancelado">Cancelado</option>
                     </select>
                 </div>
             </div>

@@ -6,7 +6,7 @@ from pathlib import Path
 
 path_data = Path(__file__).parent.parent / "data"
 
-CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
+CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/Hialpesa.csv')
 
 
 def leer_inventario():

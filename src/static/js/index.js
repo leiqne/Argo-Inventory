@@ -39,30 +39,33 @@ function init() {
         }
     });
 
-    // Enviar datos del formulario al servidor
     formRegistroDevolucion.addEventListener('submit', async (e) => {
         e.preventDefault();
-    
-        // Validar cantidades
-        const cantidadesInput = document.getElementById('devolucion-cantidades');
-        const cantidades = cantidadesInput.value.split(',').map(c => c.trim());
-    
-        // Verificar si todos los valores son enteros positivos
-        if (!cantidades.every(c => /^\d+$/.test(c))) {
-            alert('Las cantidades deben ser números enteros positivos separados por comas.');
-            return;
-        }
     
         // Crear el objeto de datos
         const data = Object.fromEntries(new FormData(formRegistroDevolucion).entries());
     
-        // Agregar los tipos de envase seleccionados
+        // Obtener los tipos de envase seleccionados
         const tiposEnvase = Array.from(
             document.querySelectorAll('input[name="tipos_envase"]:checked')
         ).map(checkbox => checkbox.value);
     
+        // Obtener las cantidades correspondientes
+        const cantidades = tiposEnvase.map(envase => {
+            const cantidadInputName = `cantidad_${envase.toLowerCase().replace(/ /g, '_')}`;
+            const cantidadInput = document.querySelector(`input[name="${cantidadInputName}"]`);
+            return cantidadInput ? parseInt(cantidadInput.value || '0', 10) : 0;
+        });
+    
+        // Validar que todas las cantidades sean enteros positivos
+        if (!cantidades.every(cantidad => Number.isInteger(cantidad) && cantidad >= 0)) {
+            alert('Las cantidades deben ser números enteros positivos.');
+            return;
+        }
+    
+        // Agregar tipos de envase y cantidades al objeto de datos
         data.tipos_envase = tiposEnvase;
-        data.cantidades = cantidades; // Asegurar que se envían los números enteros
+        data.cantidades = cantidades;
     
         console.log('Datos enviados:', data);
     
@@ -84,36 +87,6 @@ function init() {
         } catch (error) {
             console.error('Error al guardar el registro:', error);
             alert('Error inesperado al guardar el registro.');
-        }
-    });
-    
-
-    formAddCliente.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(formAddCliente).entries());
-        console.log('Datos enviados:', data);
-        try {
-            const req = await fetch('/add-cliente', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-    
-            if (req.ok) {
-                const res = await req.json();
-                alert('Cliente guardado exitosamente');
-                console.log('Respuesta del servidor:', res);
-    
-                // Cierra la ventana modal
-                ModalAddCliente.classList.add('hidden');
-            } else {
-                alert('Hubo un error al guardar el cliente');
-            }
-        } catch (error) {
-            console.error('Error al guardar el cliente:', error);
-            alert('Error inesperado al guardar el cliente');
         }
     });
     
@@ -144,7 +117,6 @@ function init() {
         const res = await req.json();
         console.log('Respuesta del servidor:', res);
 
-        // Cerrar el modal después de enviar
         ModalAddCliente.classList.add('hidden');
     });
 
@@ -157,11 +129,9 @@ function init() {
             currentClienteId = clienteId;
             console.log('Cliente seleccionado:', clienteId);
 
-            // Posicionar el menú en el cursor
             contextMenu.style.top = `${e.clientY}px`;
             contextMenu.style.left = `${e.clientX}px`;
 
-            // Mostrar el menú
             contextMenu.classList.remove('hidden');
         });
     });
@@ -178,6 +148,37 @@ function init() {
         if (action) {
             if (action === 'pendientes') location.href = '/pendientes/' + currentClienteId;
         }
-        contextMenu.classList.add('hidden'); // Cerrar el menú después de seleccionar
+        contextMenu.classList.add('hidden'); 
     });
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][name="tipos_envase"]');
+        
+        checkboxes.forEach((checkbox) => {
+            checkbox.addEventListener('change', () => {
+                // Crear el selector del input correspondiente a la cantidad
+                const cantidadInputName = checkbox.value.toLowerCase().replace(/ /g, '_').replace('plástico', 'plastico'); 
+                const cantidadInput = document.querySelector(`input[name="cantidad_${cantidadInputName}"]`);
+    
+                if (cantidadInput) {
+                    cantidadInput.disabled = !checkbox.checked; // Habilitar/deshabilitar según el estado del checkbox
+                    if (!checkbox.checked) {
+                        cantidadInput.value = ''; // Limpiar valor si se desmarca
+                    }
+                }
+            });
+        });
+    
+        // Configurar el estado inicial de los cuadros de cantidad
+        checkboxes.forEach((checkbox) => {
+            const cantidadInputName = checkbox.value.toLowerCase().replace(/ /g, '_').replace('plástico', 'plastico'); 
+            const cantidadInput = document.querySelector(`input[name="cantidad_${cantidadInputName}"]`);
+    
+            if (cantidadInput) {
+                cantidadInput.disabled = !checkbox.checked; // Configuración inicial
+            }
+        });
+    });
+    
+
 }
