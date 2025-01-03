@@ -13,6 +13,8 @@ function init() {
     const btnCloseModalRegistroDevolucion = document.getElementById('btnCloseModalRegistroDevolucion');
     const devolucionClienteInput = document.getElementById('devolucion-cliente');
 
+    initListenerChecboxes();
+
     // Mostrar el modal "Añadir Registro de Devolución"
     contextMenu.addEventListener('click', (e) => {
         const action = e.target.dataset.action;
@@ -48,15 +50,20 @@ function init() {
         // Obtener los tipos de envase seleccionados
         const tiposEnvase = Array.from(
             document.querySelectorAll('input[name="tipos_envase"]:checked')
-        ).map(checkbox => checkbox.value);
-    
+        ).map(checkbox => ({
+            value: checkbox.value,
+            element: checkbox.parentElement
+        }));
+        
+
+        console.log({tiposEnvase});
+        
         // Obtener las cantidades correspondientes
         const cantidades = tiposEnvase.map(envase => {
-            const cantidadInputName = `cantidad_${envase.toLowerCase().replace(/ /g, '_')}`;
-            const cantidadInput = document.querySelector(`input[name="${cantidadInputName}"]`);
+            const cantidadInput = envase.element.nextElementSibling
             return cantidadInput ? parseInt(cantidadInput.value || '0', 10) : 0;
         });
-    
+
         // Validar que todas las cantidades sean enteros positivos
         if (!cantidades.every(cantidad => Number.isInteger(cantidad) && cantidad >= 0)) {
             alert('Las cantidades deben ser números enteros positivos.');
@@ -64,7 +71,7 @@ function init() {
         }
     
         // Agregar tipos de envase y cantidades al objeto de datos
-        data.tipos_envase = tiposEnvase;
+        data.tipos_envase = tiposEnvase.map(e => e.value);
         data.cantidades = cantidades;
     
         console.log('Datos enviados:', data);
@@ -151,34 +158,22 @@ function init() {
         contextMenu.classList.add('hidden'); 
     });
     
-    document.addEventListener('DOMContentLoaded', () => {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"][name="tipos_envase"]');
-        
-        checkboxes.forEach((checkbox) => {
-            checkbox.addEventListener('change', () => {
-                // Crear el selector del input correspondiente a la cantidad
-                const cantidadInputName = checkbox.value.toLowerCase().replace(/ /g, '_').replace('plástico', 'plastico'); 
-                const cantidadInput = document.querySelector(`input[name="cantidad_${cantidadInputName}"]`);
-    
-                if (cantidadInput) {
-                    cantidadInput.disabled = !checkbox.checked; // Habilitar/deshabilitar según el estado del checkbox
-                    if (!checkbox.checked) {
-                        cantidadInput.value = ''; // Limpiar valor si se desmarca
-                    }
-                }
-            });
-        });
-    
-        // Configurar el estado inicial de los cuadros de cantidad
-        checkboxes.forEach((checkbox) => {
-            const cantidadInputName = checkbox.value.toLowerCase().replace(/ /g, '_').replace('plástico', 'plastico'); 
-            const cantidadInput = document.querySelector(`input[name="cantidad_${cantidadInputName}"]`);
-    
+}
+
+
+function initListenerChecboxes() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="tipos_envase"]');
+    checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', () => {
+            // Crear el selector del input correspondiente a la cantidad
+            const cantidadInput = checkbox.parentElement.nextElementSibling;
+
             if (cantidadInput) {
-                cantidadInput.disabled = !checkbox.checked; // Configuración inicial
+                cantidadInput.disabled = !checkbox.checked; // Habilitar/deshabilitar según el estado del checkbox
+                if (!checkbox.checked) {
+                    cantidadInput.value = ''; // Limpiar valor si se desmarca
+                }
             }
         });
     });
-    
-
 }
