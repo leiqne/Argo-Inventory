@@ -1,6 +1,11 @@
-from flask import Blueprint, request, render_template, redirect, jsonify
-from ..controllers.inventory_controller import leer_inventario, agregar_envase, obtener_nuevo_id, get_csv_cliente, add_cliente, listar_clientes
-from datetime import datetime
+from flask import Blueprint, request, render_template, jsonify
+from ..controllers.inventory_controller import (
+    leer_inventario,
+    agregar_envase,
+    get_csv_cliente,
+    add_cliente,
+    listar_clientes
+)
 
 app_router = Blueprint("app_router", __file__)
 
@@ -20,6 +25,20 @@ def get_peendiente_by_client(client_name:str):
     data = filter(lambda x: x["estado"] == "pendiente", get_csv_cliente(client_name))
     return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'pendientes', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=data, zip=zip)
 
+
+@app_router.delete('/api/pendientes/<string:client_name>')
+def delete_pendiente(client_name:str):
+    try:
+        data = request.get_json()
+        id = data.get('id')
+        envases = get_csv_cliente(client_name)
+        envases = list(filter(lambda x: x["id"] != id, envases))
+        # guardar de nuevo el csv
+        print(envases)
+        return jsonify({'message': 'Registro eliminado exitosamente'}), 200
+    except Exception as e:
+        print(f"Error al eliminar registro: {e}")
+        return jsonify({'error': 'Hubo un error al eliminar el registro'}), 500
 
 @app_router.post('/add-devolucion')
 def agregar_devolucion_route():
