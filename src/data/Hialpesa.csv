@@ -8,3 +8,5 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 700,Hialpesa,2023-01-07,0003-000380,Bidon plastico 120 kgs,2,pendiente
 688,Hialpesa,2025-01-01,0003-000370,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","0,0",pendiente
 688,Hialpesa,2024-12-30,0003-000370,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","0,0",pendiente
+688,Hialpesa,2024-12-31,0003-000370,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","5,4",pendiente
+688,Hialpesa,2024-12-31,0003-000370,"Bidon plastico 120 kgs,IBC","2,3",pendiente

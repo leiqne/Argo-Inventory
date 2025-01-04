@@ -6,7 +6,7 @@ from pathlib import Path
 
 path_data = Path(__file__).parent.parent / "data"
 
-CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/Hialpesa.csv')
+CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
 
 
 def leer_inventario():
@@ -86,33 +86,57 @@ def listar_clientes():
 def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, fecha_hoy=None, estado='pendiente'):
     """
     Agrega un nuevo envase con múltiples guías de remisión, tipos de envases y cantidades.
-    No se realiza ninguna verificación para comprobar si el ID ya existe.
+    Retorna un error si el ID ya existe en el archivo del cliente.
     """
     if not fecha_hoy:
         fecha_hoy = datetime.today().strftime('%Y-%m-%d')
         
+    # Crear la ruta específica para el cliente
+    client_csv_path = path_data / f"{cliente}.csv"
+    
+    # Verificar si el archivo del cliente existe y si el ID ya está en uso
+    if client_csv_path.exists():
+        with open(client_csv_path, mode='r', newline='', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if int(row.get('id', 0)) == nuevo_id:
+                    raise ValueError(f"El ID {nuevo_id} ya existe en el archivo de {cliente}.csv.")
+    
+    # Convertir las cantidades a enteros y asegurarse de que las listas se guarden como cadenas separadas por comas
     cantidades = [int(float(c)) for c in cantidades]
-    # Asegurarse de que las listas se guarden como cadenas separadas por comas
     guias_remision_str = ','.join(guias_remision)
     tipos_envase_str = ','.join(tipos_envase)
     cantidades_str = ','.join(map(str, cantidades))
 
+    registro = {
+        'id': nuevo_id,
+        'cliente': cliente,
+        'fecha': fecha_hoy,
+        'guias_remision': guias_remision_str,
+        'tipos_envase': tipos_envase_str,
+        'cantidades': cantidades_str,
+        'estado': estado
+    }
+    
+    # Agregar el registro al archivo específico del cliente
+    with open(client_csv_path, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
+        
+        if file.tell() == 0:
+            writer.writeheader()
+        
+        writer.writerow(registro)
+    
+    # Agregar el mismo registro al archivo general 'inventario.csv'
     with open(CSV_PATH, mode='a', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
         
-        if file.tell() == 0:  # Escribir encabezado solo si el archivo está vacío
+        if file.tell() == 0:
             writer.writeheader()
         
-        writer.writerow({
-            'id': nuevo_id,
-            'cliente': cliente,
-            'fecha': fecha_hoy,
-            'guias_remision': guias_remision_str,
-            'tipos_envase': tipos_envase_str,
-            'cantidades': cantidades_str,
-            'estado': estado
-        })
-    
+        writer.writerow(registro)
+
+
 def obtener_nuevo_id():
     """Obtiene un nuevo ID incremental para el próximo registro."""
     inventario = leer_inventario()
