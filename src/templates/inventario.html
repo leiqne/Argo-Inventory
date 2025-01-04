@@ -95,11 +95,12 @@
                                     </div>
                                 </td>
                                 <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                                    <div
-                                        class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-emerald-100/60 dark:bg-gray-800">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
-                                        <h2 class="text-sm font-normal text-yellow-500">Pendiente</h2>
-                                    </div>
+                                    <div class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 {% if envase['estado'] == 'Pendiente' %}bg-yellow-100{% elif envase['estado'] == 'Cancelado' %}bg-red-100{% else %}bg-green-100{% endif %}">
+                                        <span class="h-1.5 w-1.5 rounded-full {% if envase['estado'] == 'Pendiente' %}bg-yellow-500{% elif envase['estado'] == 'Cancelado' %}bg-red-500{% else %}bg-green-500{% endif %}"></span>
+                                        <h2 class="text-sm font-normal {% if envase['estado'] == 'Pendiente' %}text-yellow-500{% elif envase['estado'] == 'Cancelado' %}text-red-500{% else %}text-green-500{% endif %}">
+                                            {{ envase['estado'] }}
+                                        </h2>
+                                    </div>                                    
                                 </td>
                                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                                     <div class="flex items-center gap-x-2">
@@ -163,4 +164,7 @@
         </a>
     </div>
 </section>
+{%endblock%}
+{%block script%}
+<script src="{{url_for('static', filename='js/inventario.js')}}"></script>
 {%endblock%}

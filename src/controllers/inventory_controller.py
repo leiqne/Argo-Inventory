@@ -28,15 +28,19 @@ def leer_inventario():
 
             row['fecha'] = row.get('fecha')
             
+            # Convertir cadenas separadas por comas en listas
             row['guias_remision'] = [item.strip() for item in row.get('guias_remision', '').split(',') if item.strip()]
             row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
             row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
             
-            row['estado'] = row.get('estado', 'False').strip().lower() == 'true'
+            # Dejar el estado tal cual (en minúsculas para uniformidad)
+            row['estado'] = row.get('estado', '').strip().lower()
             
             # Agregar la fila procesada al inventario
             inventario.append(row)
+    print (inventario)
     return inventario
+
 
 
 

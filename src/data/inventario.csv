@@ -1,5 +1,4 @@
-id,cliente,fecha,guias_remision,tipos_envase,cantidades,cancelado
-
-683,Hialpesa,2024-12-04,0003-000375,"Bidon plastico 120 kgs,Bidon plastico 150 kgs,Bidon plastico 60 kgs","2,5,8",pendiente
-688,Hialpesa,2024-12-31,0003-000370,"Bidon plastico 120 kgs,IBC","2,3",pendiente
-689,Modipsa,2024-12-01,0003-000370,"Bidon plastico 120 kgs,IBC","2,3",pendiente
+id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
+674,Hialpesa,2022-07-01,"003-00215,0003-000216","Bidon plastico 150 kgs,IBC","2,1",cancelado
+675,Copacabana,2022-07-01,003-00217,Bidon plastico 120 kgs,3,cancelado
+676,Hialpesa,2022-08-04,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs,Bidon plastico 60 kgs,IBC","3,2,23,3",pendiente
