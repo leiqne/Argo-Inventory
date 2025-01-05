@@ -3,3 +3,7 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 675,Copacabana,2022-07-01,003-00217,Bidon plastico 120 kgs,3,cancelado
 676,Hialpesa,2022-08-04,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs,Bidon plastico 60 kgs,IBC","3,2,23,3",pendiente
 676,Modipsa,2024-12-11,003-00220,Bidon plastico 120 kgs,5,pendiente
+676,Copacabana,2024-12-26,003-00220,Bidon plastico 150 kgs,5,pendiente
+688,Copacabana,2024-12-29,003-00220,Bidon plastico 120 kgs,3,pendiente
+674,Copacabana,2024-12-23,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","3,4",pendiente
+681,Copacabana,2024-12-23,003-00220,Bidon plastico 120 kgs,4,anulado
