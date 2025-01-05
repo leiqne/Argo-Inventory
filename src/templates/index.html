@@ -5,20 +5,21 @@
 <main class="bg-gray-700 relative">
     <section class="w-full h-screen grid grid-cols-4 pt-3 relative">
         <div class="col-span-3">
-            {%for cliente in clientes%}
+            {% for cliente in clientes %}
             <div class="max-w-2xl mx-auto my-2 px-8 py-4 bg-white rounded-lg shadow-md dark:bg-gray-800 grid grid-cols-6 relative cliente-item"
-                data-cliente="{{cliente}}">
+                data-cliente="{{ cliente['nombre'] }}">
                 <div class="mt-2 col-span-5">
                     <a href="#"
                         class="text-xl font-bold text-gray-700 dark:text-white hover:text-gray-600 dark:hover:text-gray-200 hover:underline"
-                        tabindex="0" role="link">Cliente {{cliente}}</a>
+                        tabindex="0" role="link">Cliente {{ cliente['nombre'] }}</a>
                 </div>
                 <div class="flex h-full w-full border-l">
-                    <h1 class="m-auto text-white font-large">{{0}}</h1>
+                    <h1 class="m-auto text-white font-large">{{ cliente['pendientes'] }}</h1>
                 </div>
             </div>
-            {%endfor%}
+            {% endfor %}
         </div>
+        
         <div class="w-2/4 pt-3">
             <!-- Botón de Agregar Cliente -->
             <button id="btnAddCliente"

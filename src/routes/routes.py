@@ -4,7 +4,8 @@ from ..controllers.inventory_controller import (
     agregar_envase,
     get_csv_cliente,
     add_cliente,
-    listar_clientes
+    listar_clientes,
+    envases_pendientes
 )
 
 app_router = Blueprint("app_router", __file__)
@@ -12,9 +13,13 @@ app_router = Blueprint("app_router", __file__)
 @app_router.get("/")
 def index():
     clientes = listar_clientes()
-    print (f"clientes", clientes)
-    return render_template('index.html', clientes=clientes, zip=zip)
-
+    clientes_con_pendientes = []
+    
+    for cliente in clientes:
+        pendientes = envases_pendientes(cliente)
+        clientes_con_pendientes.append({"nombre": cliente, "pendientes": pendientes})
+    
+    return render_template('index.html', clientes=clientes_con_pendientes)
 @app_router.get("/inventario")
 def inventario():
     envases = leer_inventario()

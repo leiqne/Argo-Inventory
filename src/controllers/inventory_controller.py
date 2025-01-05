@@ -82,7 +82,16 @@ def add_cliente(client_name):
     df = pd.DataFrame(columns=['id','cliente','fecha','guias_remision','tipos_envase','cantidades','estado'])
     df.to_csv(path_data / f"{client_name}.csv", index=False)
 
-
+def envases_pendientes(client_name):
+    contador_pendientes = 0
+    
+    with open(path_data / f"{client_name}.csv", mode='r', newline='', encoding='utf-8-sig') as file:
+        reader = csv.DictReader(file, delimiter=',')
+        
+        for fila in reader:
+            if fila.get('estado') == 'pendiente':
+                contador_pendientes += 1   
+    return contador_pendientes
 
 def listar_clientes():
     return [file.stem for file in path_data.glob("*.csv") if file.stem != "inventario"]
