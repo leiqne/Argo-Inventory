@@ -38,7 +38,6 @@ def leer_inventario():
             
             # Agregar la fila procesada al inventario
             inventario.append(row)
-    print (inventario)
     return inventario
 
 

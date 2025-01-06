@@ -94,10 +94,20 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                                    <div class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 {% if envase['estado'] == 'Pendiente' %}bg-yellow-100{% elif envase['estado'] == 'Cancelado' %}bg-red-100{% else %}bg-green-100{% endif %}">
-                                        <span class="h-1.5 w-1.5 rounded-full {% if envase['estado'] == 'Pendiente' %}bg-yellow-500{% elif envase['estado'] == 'Cancelado' %}bg-red-500{% else %}bg-green-500{% endif %}"></span>
-                                        <h2 class="text-sm font-normal {% if envase['estado'] == 'Pendiente' %}text-yellow-500{% elif envase['estado'] == 'Cancelado' %}text-red-500{% else %}text-green-500{% endif %}">
+                                <td class="px-12 py-4 text-sm font-medium text-gray-700 whitespace-nowrap" id="status-container" data-estado="{{ envase['estado'] }}">
+                                    <div class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 
+                                    {% if envase['estado'] == 'pendiente' %}bg-yellow-100
+                                    {% elif envase['estado'] == 'cancelado' %}bg-green-100
+                                    {% else %}bg-red-100{% endif %}">
+                                        <span class="h-1.5 w-1.5 rounded-full 
+                                        {% if envase['estado'] == 'pendiente' %}bg-yellow-500
+                                        {% elif envase['estado'] == 'cancelado' %}bg-green-500
+                                        {% else %}bg-red-500{% endif %}"></span>
+                                        <h2 class="text-sm font-normal 
+                                        {% if envase['estado'] == 'pendiente' %}text-yellow-500
+                                        {% elif envase['estado'] == 'cancelado' %}text-green-500
+                                        {% else %}text-red-500
+                                        {% endif %}">
                                             {{ envase['estado'] }}
                                         </h2>
                                     </div>                                    
