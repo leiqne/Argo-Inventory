@@ -71,15 +71,11 @@
                                     </td>
                                     <td class="px-4 py-4 text-sm whitespace-nowrap">
                                         <div class="flex items-center gap-x-2">
-                                            {% for tipo, color in zip(envase['tipos_envase'], colors) %}
+                                            {% for tipo, cant, color in zip(envase['tipos_envase'], envase['cantidades'], colors) %}
+                                            {%if cant != "0"%}
                                             <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{tipo}}</p>
-                                            {%endfor%}
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-4 text-sm whitespace-nowrap">
-                                        <div class="flex items-center gap-x-2">
-                                            {% for cant, color in zip(envase['cantidades'], colors) %}
                                             <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{cant}}</p>
+                                            {%endif%}
                                             {%endfor%}
                                         </div>
                                     </td>

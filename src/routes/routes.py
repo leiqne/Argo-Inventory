@@ -6,6 +6,7 @@ from ..controllers.inventory_controller import (
     add_cliente,
     listar_clientes
 )
+import pandas as pd
 
 app_router = Blueprint("app_router", __file__)
 
@@ -22,7 +23,20 @@ def inventario():
 
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
-    data = filter(lambda x: x["estado"] == "pendiente", get_csv_cliente(client_name))
+    df = pd.read_csv(f"src/data/{client_name}.csv")
+    data = df[df['estado'] == 'pendiente'] \
+        .assign(
+            tipos_envase=lambda x: x['tipos_envase'].str.split(','),
+            guias_remision=lambda x: x['guias_remision'].str.split(','),
+            cantidades=lambda x: x['cantidades'].str.split(',')
+        ) \
+        .groupby("id")\
+        .agg({
+            "guias_remision": lambda x: list(set(item for sublist in x for item in sublist)),
+            "tipos_envase": lambda x: list(set(item for sublist in x for item in sublist)),
+            "cantidades": lambda x: list(set(item for sublist in x for item in sublist)),
+        }) \
+        .sort_values(by='id', ascending=True).to_dict("records")
     return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'pendientes', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=data, zip=zip)
 
 
