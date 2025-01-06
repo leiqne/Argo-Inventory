@@ -28,15 +28,18 @@ def leer_inventario():
 
             row['fecha'] = row.get('fecha')
             
+            # Convertir cadenas separadas por comas en listas
             row['guias_remision'] = [item.strip() for item in row.get('guias_remision', '').split(',') if item.strip()]
             row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
             row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
             
-            row['estado'] = row.get('estado', 'False').strip().lower() == 'true'
+            # Dejar el estado tal cual (en minúsculas para uniformidad)
+            row['estado'] = row.get('estado', '').strip().lower()
             
             # Agregar la fila procesada al inventario
             inventario.append(row)
     return inventario
+
 
 
 
@@ -78,7 +81,16 @@ def add_cliente(client_name):
     df = pd.DataFrame(columns=['id','cliente','fecha','guias_remision','tipos_envase','cantidades','estado'])
     df.to_csv(path_data / f"{client_name}.csv", index=False)
 
-
+def envases_pendientes(client_name):
+    contador_pendientes = 0
+    
+    with open(path_data / f"{client_name}.csv", mode='r', newline='', encoding='utf-8-sig') as file:
+        reader = csv.DictReader(file, delimiter=',')
+        
+        for fila in reader:
+            if fila.get('estado') == 'pendiente':
+                contador_pendientes += 1   
+    return contador_pendientes
 
 def listar_clientes():
     return [file.stem for file in path_data.glob("*.csv") if file.stem != "inventario"]

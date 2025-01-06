@@ -87,6 +87,7 @@ function init() {
     
             if (req.ok) {
                 alert('Registro de devolución guardado exitosamente');
+                location.reload();
                 ModalRegistroDevolucion.classList.add('hidden');
             } else {
                 alert('Hubo un error al guardar el registro.');
@@ -95,6 +96,7 @@ function init() {
             console.error('Error al guardar el registro:', error);
             alert('Error inesperado al guardar el registro.');
         }
+   
     });
     
 
