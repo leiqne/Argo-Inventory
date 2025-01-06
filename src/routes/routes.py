@@ -41,7 +41,9 @@ def get_peendiente_by_client(client_name:str):
             "guias_remision": lambda x: list(set(item for sublist in x for item in sublist)),
             "tipos_envase": lambda x: list(set(item for sublist in x for item in sublist)),
             "cantidades": lambda x: list(set(item for sublist in x for item in sublist)),
+            "fecha": "first"
         }) \
+        .reset_index() \
         .sort_values(by='id', ascending=True).to_dict("records")
     return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'pendientes', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=data, zip=zip)
 
