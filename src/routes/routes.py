@@ -5,7 +5,8 @@ from ..controllers.inventory_controller import (
     get_csv_cliente,
     add_cliente,
     listar_clientes,
-    envases_pendientes
+    envases_pendientes,
+    delete_registro
 )
 import pandas as pd
 
@@ -50,10 +51,7 @@ def delete_pendiente(client_name:str):
     try:
         data = request.get_json()
         id = data.get('id')
-        envases = get_csv_cliente(client_name)
-        envases = list(filter(lambda x: x["id"] != id, envases))
-        # guardar de nuevo el csv
-        print(envases)
+        delete_registro(client_name, id)
         return jsonify({'message': 'Registro eliminado exitosamente'}), 200
     except Exception as e:
         print(f"Error al eliminar registro: {e}")

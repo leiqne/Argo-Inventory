@@ -8,6 +8,10 @@ path_data = Path(__file__).parent.parent / "data"
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
 
+def delete_registro(client_name, id):
+    df = pd.read_csv(path_data / f"{client_name}.csv")
+    df = df[df['id'] != id]
+    df.to_csv(path_data / f"{client_name}.csv", index=False)
 
 def leer_inventario():
     """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales de Python."""
