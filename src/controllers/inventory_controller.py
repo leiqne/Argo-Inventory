@@ -8,9 +8,12 @@ path_data = Path(__file__).parent.parent / "data"
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
 
-def delete_registro(client_name, id):
+def delete_registro(client_name, id_):
+    id_=int(id_)
     df = pd.read_csv(path_data / f"{client_name}.csv")
-    df = df[df['id'] != id]
+    df.loc[df["id"]==id_, "estado"]="cancelado"
+    print (id_)
+    print (df)
     df.to_csv(path_data / f"{client_name}.csv", index=False)
 
 def leer_inventario():
@@ -175,13 +178,3 @@ def buscar_envase_por_guia(guia_remision):
         if row['guia_remision'] == guia_remision:
             return row
     return None
-
-def eliminar_envase(id_envase):
-    """Elimina un envase por su ID."""
-    inventario = leer_inventario()
-    nuevos_datos = [row for row in inventario if row['id'] != id_envase]
-    with open(CSV_PATH, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=['id', 'guia_remision', 'cliente', 'fecha', 'tipo_envase', 'estado'])
-        writer.writeheader()
-        writer.writerows(nuevos_datos)
-

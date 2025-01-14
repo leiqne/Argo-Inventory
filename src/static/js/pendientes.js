@@ -19,7 +19,7 @@ deleteSelected = async (e) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ids: selected})
+                body: JSON.stringify({id: selected})
             });
 
             if (response.ok) {

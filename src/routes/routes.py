@@ -44,7 +44,7 @@ def get_peendiente_by_client(client_name:str):
             "fecha": "first"
         }) \
         .reset_index() \
-        .sort_values(by='id', ascending=True).to_dict("records")
+        .sort_values(by='fecha', ascending=True).to_dict("records")
     return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'pendientes', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=data, zip=zip)
 
 
@@ -53,6 +53,7 @@ def delete_pendiente(client_name:str):
     try:
         data = request.get_json()
         id = data.get('id')
+        print(client_name , id)
         delete_registro(client_name, id)
         return jsonify({'message': 'Registro eliminado exitosamente'}), 200
     except Exception as e:
