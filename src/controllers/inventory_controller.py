@@ -8,13 +8,16 @@ path_data = Path(__file__).parent.parent / "data"
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
 
-def delete_registro(client_name, id_):
-    id_=int(id_)
+def delete_registro(client_name, reg_id):
+    reg_id=int(reg_id)
     df = pd.read_csv(path_data / f"{client_name}.csv")
-    df.loc[df["id"]==id_, "estado"]="cancelado"
-    print (id_)
-    print (df)
+    df.loc[df["id"]==reg_id, "estado"]="cancelado"
     df.to_csv(path_data / f"{client_name}.csv", index=False)
+
+    df = pd.read_csv(path_data / "inventario.csv")
+    df.loc[df["id"]==reg_id, "estado"]="cancelado"
+    df.to_csv(path_data / "inventario.csv", index=False)
+
 
 def leer_inventario():
     """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales de Python."""
@@ -46,9 +49,6 @@ def leer_inventario():
             # Agregar la fila procesada al inventario
             inventario.append(row)
     return inventario
-
-
-
 
 def get_csv_cliente(client_name):
     """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales"""
@@ -82,7 +82,6 @@ def get_csv_cliente(client_name):
             inventario.append(row)
     
     return inventario
-
 
 def add_cliente(client_name):
     df = pd.DataFrame(columns=['id','cliente','fecha','guias_remision','tipos_envase','cantidades','estado'])
@@ -161,7 +160,6 @@ def obtener_nuevo_id():
     inventario = leer_inventario()
     ids = [row['id'] for row in inventario if isinstance(row['id'], int)]
     return max(ids, default=0) + 1
-
 
 def buscar_envase(id_envase):
     """Busca un envase por ID."""

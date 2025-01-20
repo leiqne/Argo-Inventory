@@ -2,12 +2,12 @@ from flask import Blueprint, request, render_template, jsonify
 from ..controllers.inventory_controller import (
     leer_inventario,
     agregar_envase,
-    get_csv_cliente,
     add_cliente,
     listar_clientes,
     envases_pendientes,
     delete_registro
 )
+from ..helpers import csv_for_table
 import pandas as pd
 
 app_router = Blueprint("app_router", __file__)
@@ -30,30 +30,25 @@ def inventario():
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
     df = pd.read_csv(f"src/data/{client_name}.csv")
-    data = df[df['estado'] == 'pendiente'] \
-        .assign(
-            tipos_envase=lambda x: x['tipos_envase'].str.split(','),
-            guias_remision=lambda x: x['guias_remision'].str.split(','),
-            cantidades=lambda x: x['cantidades'].str.split(',')
-        ) \
-        .groupby("id")\
-        .agg({
-            "guias_remision": lambda x: list(set(item for sublist in x for item in sublist)),
-            "tipos_envase": lambda x: list(set(item for sublist in x for item in sublist)),
-            "cantidades": lambda x: list(set(item for sublist in x for item in sublist)),
-            "fecha": "first"
-        }) \
-        .reset_index() \
-        .sort_values(by='fecha', ascending=True).to_dict("records")
+    data = df[df['estado'] == 'pendiente']
+    data = csv_for_table(df=data)
     return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'pendientes', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=data, zip=zip)
 
+@app_router.get("/summary/<string:client_name>")
+def sumary(client_name:str):
+    df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False)
+    
+    orden = ['pendiente', 'cancelado', 'anulado']
+    df['estado'] = pd.Categorical(df['estado'], categories=orden, ordered=True)
+    df_ordenado = df.sort_values(by='estado')
+
+    return render_template('sumary.html', client_name=client_name, paths=[{'name': 'summary', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=df_ordenado, zip=zip)
 
 @app_router.delete('/api/pendientes/<string:client_name>')
 def delete_pendiente(client_name:str):
     try:
         data = request.get_json()
         id = data.get('id')
-        print(client_name , id)
         delete_registro(client_name, id)
         return jsonify({'message': 'Registro eliminado exitosamente'}), 200
     except Exception as e:
