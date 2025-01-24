@@ -36,13 +36,12 @@ def get_peendiente_by_client(client_name:str):
 
 @app_router.get("/summary/<string:client_name>")
 def sumary(client_name:str):
-    df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False)
-    
+    df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
     orden = ['pendiente', 'cancelado', 'anulado']
     df['estado'] = pd.Categorical(df['estado'], categories=orden, ordered=True)
     df_ordenado = df.sort_values(by='estado')
 
-    return render_template('sumary.html', client_name=client_name, paths=[{'name': 'summary', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=df_ordenado, zip=zip)
+    return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'summary', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=df_ordenado, zip=zip)
 
 @app_router.delete('/api/pendientes/<string:client_name>')
 def delete_pendiente(client_name:str):
