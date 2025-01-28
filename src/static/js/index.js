@@ -159,7 +159,23 @@ function init() {
         }
         contextMenu.classList.add('hidden'); 
     });
-    
+
+    document.getElementById('buscadorClientes').addEventListener('input', function () {
+        const searchValue = this.value.toLowerCase();
+        const clienteItems = document.querySelectorAll('.cliente-item');
+
+        clienteItems.forEach(item => {
+            const clienteNombre = item.getAttribute('data-cliente').toLowerCase();
+            if (clienteNombre.includes(searchValue)) {
+                item.classList.add('flex')
+                item.classList.remove('hidden')
+            } else {
+                item.classList.remove('flex')
+                item.classList.add('hidden')
+            }
+        });
+    });
+
 }
 
 

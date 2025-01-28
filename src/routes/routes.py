@@ -25,7 +25,11 @@ def index():
 @app_router.get("/inventario")
 def inventario():
     envases = leer_inventario()
-    return render_template('inventario.html', envases=envases, zip=zip, path=[{'name': 'inventario', 'url':'#'}])
+
+    orden_estados = ['pendiente', 'cancelado', 'anulado']
+    envases_ordenados = sorted(envases, key=lambda x: (orden_estados.index(x['estado']), x['fecha']))
+
+    return render_template('inventario.html', envases=envases_ordenados, zip=zip, path=[{'name': 'inventario', 'url':'#'}])
 
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):

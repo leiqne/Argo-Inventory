@@ -13,7 +13,7 @@ def delete_registro(client_name, reg_id):
     df = pd.read_csv(path_data / f"{client_name}.csv")
     df.loc[df["id"]==reg_id, "estado"]="cancelado"
     df.to_csv(path_data / f"{client_name}.csv", index=False)
-
+    
     df = pd.read_csv(path_data / "inventario.csv")
     df.loc[df["id"]==reg_id, "estado"]="cancelado"
     df.to_csv(path_data / "inventario.csv", index=False)
