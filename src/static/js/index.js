@@ -156,6 +156,8 @@ function init() {
         const action = e.target.dataset.action;
         if (action) {
             if (action === 'pendientes') location.href = '/pendientes/' + currentClienteId;
+            if (action === 'summary') location.href = '/summary/' + currentClienteId;
+            if (action === 'pendientes') location.href = '/pendientes/' + currentClienteId;
         }
         contextMenu.classList.add('hidden'); 
     });
