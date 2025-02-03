@@ -1,65 +1,203 @@
-<!doctype html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario de Envases</title>
-</head>
-<body>
-    <h1>Inventario de Envases</h1>
+{%extends "base.html"%}
+{% block title %}Inventario de Envases{% endblock %}
+{%set colors = ["text-indigo-500 bg-indigo-100/60", "text-blue-500 bg-blue-100/60", "text-pink-500 bg-pink-100/60"]%}
+{% block body %}
+<main class="bg-gray-700 relative">
 
-    <form action="/agregar_envase" method="post">
-        <label for="id">Guía de envases (ID):</label>
-        <input type="text" id="id" name="id" placeholder="Dejar vacío para ID automático">
-        
-        <label for="cliente">Nombre del cliente:</label>
-        <input type="text" id="cliente" name="cliente" required>
-    
-        <label for="guia_remision">Guías de Remisión (separar por comas):</label>
-        <input type="text" id="guia_remision" name="guia_remision" required>        
-    
-        <label for="tipo_envase">Tipos de envases (separar por comas):</label>
-        <input type="text" id="tipo_envase" name="tipo_envase" required>
-    
-        <label for="cantidades">Cantidad de cada tipo (separar por comas):</label>
-        <input type="text" id="cantidades" name="cantidades" placeholder="Ejemplo: 2,5" required>
-    
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha">
-        
-        <label for="cancelado">Cancelado:</label>
-        <input type="checkbox" id="cancelado" name="cancelado">
-        
-        <button type="submit">Guardar</button>
-    </form>
-    
-    <h2>Lista de Envases</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Guía de envases (ID)</th>
-                <th>Cliente</th>
-                <th>Fecha</th>
-                <th>Guías de Remisión</th>
-                <th>Tipos de Envases</th>
-                <th>Cantidades</th>
-                <th>Cancelado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for envase in envases %}
-            <tr>
-                <td>{{ envase['id'] }}</td>
-                <td>{{ envase['cliente'] }}</td>
-                <td>{{ envase['fecha'] }}</td>
-                <td>{{ envase['guias_remision'] }}</td> 
-                <td>{{ envase['tipos_envase'] }}</td> 
-                <td>{{ ', '.join(envase['cantidades'] | map('string')) }}</td> 
-                <td>{{ 'Sí' if envase['cancelado'] else 'No' }}</td> 
-            </tr>
+    <section class="w-full h-screen grid grid-cols-4 pt-3 relative">
+        <div class="col-span-3">
+            <!--buscador-->
+            <div class="max-w-2xl mx-auto mb-4 my-4">
+                <div class="relative flex justify-end">
+                    <input id="buscadorClientes" 
+                           type="text" 
+                           placeholder="Buscar cliente..." 
+                           class="block w-1/3 px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring pr-10">
+                    <!-- Imagen de lupa dentro del recuadro -->
+                    <img src="{{ url_for('static', filename='img/lupa.png') }}" alt="Lupa" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer">
+                </div>
+            </div>
+            
+            {% for cliente in clientes %}
+            <div class="max-w-2xl mx-auto my-2 px-8 py-4 bg-white rounded-lg shadow-md dark:bg-gray-800 grid grid-cols-6 relative cliente-item"
+                data-cliente="{{ cliente['nombre'] }}">
+                <div class="mt-2 col-span-5">
+                    <a href="/#"
+                        class="text-xl font-bold text-gray-700 dark:text-white hover:text-gray-600 dark:hover:text-gray-200 hover:underline"
+                        tabindex="0" role="link">Cliente {{ cliente['nombre'] }}</a>
+                </div>
+                <div class="flex h-full w-full border-l">
+                    <h1 class="m-auto text-white font-large">{{ cliente['pendientes'] }}</h1>
+                </div>
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
-    
-</body>
-</html>
+        </div>
+        
+        <div class="w-2/4 pt-3 my-">
+            <!-- Botón de Agregar Cliente -->
+            <button id="btnAddCliente"
+                class="w-full flex items-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-800 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-600 focus:ring-opacity-80">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                </svg>
+                <span class="mx-1">Agregar Cliente</span>
+            </button>
+        
+            <!-- Botón de Ir a Inventario -->
+            <a href="/inventario" id="btnInventario"
+                class="w-full flex items-center mt-4 px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-800 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-600 focus:ring-opacity-80">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 4.5h16.5M3.75 9.75h16.5M3.75 15h16.5M3.75 20.25h16.5" />
+                </svg>
+                <span class="mx-1">Ir a Inventario</span>
+            </a>
+        </div>
+    </section>
+
+    <div id="ModalAddCliente" 
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+   <section class="w-auto p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
+       <form id="formAddCliente">
+           <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-3">
+               <div class="col-span-3">
+                   <label class="text-gray-700 dark:text-gray-200" for="client-name">Nombre del cliente</label>
+                   <input id="client-name" type="text" name="client_name"
+                       class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+               </div>
+           </div>
+           <div class="flex justify-end mt-6">
+               <button type="button" id="btnCloseModal"
+                   class="px-4 py-2 mr-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none">Cancelar</button>
+               <button
+                   class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Guardar</button>
+           </div>
+       </form>
+   </section>
+</div>
+
+
+<div id="ModalRegistroDevolucion" 
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+    <section class="w-auto p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
+        <form id="formRegistroDevolucion">
+            <h2 class="text-lg font-medium text-gray-700 dark:text-gray-200 mb-4">Añadir Registro de Devolución</h2>
+            <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+                <!-- Cliente (autocompletado) -->
+                <div class="col-span-2">
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-cliente">Cliente</label>
+                    <input id="devolucion-cliente" type="text" name="cliente" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-200 border rounded-md cursor-not-allowed focus:outline-none" 
+                        readonly>
+                </div>
+
+                <!-- ID -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-id">ID</label>
+                    <input id="devolucion-id" type="text" name="id" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                </div>
+
+                <!-- Fecha -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-fecha">Fecha</label>
+                    <input id="devolucion-fecha" type="date" name="fecha" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                </div>
+
+                <!-- Guías de Remisión -->
+                <div class="col-span-2">
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-guias">Guías de Remisión</label>
+                    <input id="devolucion-guias" type="text" name="guias_remision" 
+                        placeholder="Separar por comas" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                </div>
+
+                <!-- Tipos de Envase (checkboxes) -->
+                <div class="col-span-2">
+                    <label class="text-gray-700 dark:text-gray-200">Tipos de Envase</label>
+                    <div class="text-gray-200 flex flex-col gap-2 mt-2">
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 120 kgs" class="mr-2 rounded text-blue-600">
+                                Bidon plastico 120 kgs
+                            </div>
+                            <input type="number" name="cantidad_bidon_120" min="0" step="1"
+                                placeholder="Cantidad" 
+                                class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 150 kgs" class="mr-2 rounded text-blue-600">
+                                Bidon plastico 150 kgs
+                            </div>
+                            <input type="number" name="cantidad_bidon_150" min="0" step="1"
+                                placeholder="Cantidad" 
+                                class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Bidon plastico 60 kgs" class="mr-2 rounded text-blue-600">
+                                Bidon plastico 60 kgs
+                            </div>
+                            <input type="number" name="cantidad_bidon_60" min="0" step="1"
+                                placeholder="Cantidad" 
+                                class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
+                        </label>
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="IBC" class="mr-2 rounded text-blue-600">
+                                IBC
+                            </div>
+                            <input type="number" name="cantidad_ibc" min="0" step="1"
+                                placeholder="Cantidad" 
+                                class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Estado -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="devolucion-estado">Estado</label>
+                    <select id="devolucion-estado" name="estado" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                        <option value="pendiente">Pendiente</option>
+                        <option value="anulado">Anulado</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-6">
+                <button type="button" id="btnCloseModalRegistroDevolucion"
+                    class="px-4 py-2 mr-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none">Cancelar</button>
+                <button
+                    class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Guardar</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+</main>
+<!-- Menú contextual -->
+<div id="context-menu"
+    class="hidden absolute bg-white dark:bg-gray-800 shadow-lg rounded-lg border z-50 w-40 overflow-hidden">
+    <ul>
+        <li class="px-4 py-2 text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer" data-action="add">
+            Añadir registro
+        </li>
+        <li class="px-4 py-2 text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+            data-action="summary">Ver resumen
+        </li>
+        <li class="px-4 py-2 text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+            data-action="pendientes">Ver Pendientes
+        </li>
+    </ul>
+</div>
+{%endblock%}
+
+{%block script%}
+<script src="{{url_for('static', filename='js/index.js')}}"></script>
+{%endblock%}

@@ -1,0 +1,146 @@
+from flask import Blueprint, request, render_template, jsonify
+from ..controllers.inventory_controller import (
+    leer_inventario,
+    agregar_envase,
+    add_cliente,
+    listar_clientes,
+    envases_pendientes,
+    delete_registro
+)
+from ..helpers import csv_for_table
+import pandas as pd
+
+app_router = Blueprint("app_router", __file__)
+
+@app_router.get("/")
+def index():
+    clientes = listar_clientes()
+    clientes_con_pendientes = []
+    
+    for cliente in clientes:
+        pendientes = envases_pendientes(cliente)
+        clientes_con_pendientes.append({"nombre": cliente, "pendientes": pendientes})
+    
+    return render_template('index.html', clientes=clientes_con_pendientes)
+from flask import request
+
+@app_router.get("/inventario")
+def inventario():
+    # Obtener todos los envases
+    envases = leer_inventario()
+
+    # Ordenar los envases
+    orden_estados = ['pendiente', 'cancelado', 'anulado']
+    envases_ordenados = sorted(envases, key=lambda x: (orden_estados.index(x['estado']), x['fecha']))
+
+    # Paginación
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_envases = envases_ordenados[start:end]
+    total_pages = (len(envases_ordenados) + per_page - 1) // per_page
+
+    return render_template(
+        'inventario.html',
+        envases=paginated_envases,
+        page=page,
+        total_pages=total_pages,
+        zip=zip,
+        path=[{'name': 'inventario', 'url': '#'}]
+    )
+@app_router.get("/pendientes/<string:client_name>")
+def get_peendiente_by_client(client_name:str):
+    df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
+    orden = ['pendiente', 'cancelado', 'anulado']
+    df['estado'] = pd.Categorical(df['estado'], categories=orden, ordered=True)
+    df = df[df['estado'] == 'pendiente']
+    return render_template('sumary_pend.html', client_name=client_name, envases=df, zip=zip)
+
+
+@app_router.get("/summary/<string:client_name>")
+def sumary(client_name:str):
+    df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
+    orden = ['pendiente', 'cancelado', 'anulado']
+    df['estado'] = pd.Categorical(df['estado'], categories=orden, ordered=True)
+    df_ordenado = df.sort_values(by='estado')
+
+    return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'summary', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=df_ordenado, zip=zip)
+
+@app_router.delete('/api/pendientes/<string:client_name>')
+def delete_pendiente(client_name:str):
+    try:
+        data = request.get_json()
+        id = data.get('id')
+        delete_registro(client_name, id)
+        return jsonify({'message': 'Registro eliminado exitosamente'}), 200
+    except Exception as e:
+        print(f"Error al eliminar registro: {e}")
+        return jsonify({'error': 'Hubo un error al eliminar el registro'}), 500
+
+@app_router.post('/add-devolucion')
+def agregar_devolucion_route():
+    try:
+        # Obtén los datos del registro de devolución desde la solicitud
+        data = request.get_json()
+        print(f"Datos recibidos: {data}")
+
+        # Extraer datos de la solicitud
+        cliente = data.get('cliente')
+        nuevo_id = data.get('id')
+        fecha = data.get('fecha')
+        guias_remision = data.get('guias_remision')
+        tipos_envase = data.get('tipos_envase')
+        cantidades = data.get('cantidades')
+        estado = data.get('estado')  # Valor predeterminado 'Pendiente'
+
+        # Validar los campos obligatorios
+        if not cliente or not nuevo_id or not fecha or not guias_remision or not tipos_envase or not cantidades:
+            return jsonify({'error': 'Todos los campos son obligatorios'}), 400
+
+        # Convertir listas en caso de que sean cadenas separadas por comas
+        if isinstance(guias_remision, str):
+            guias_remision = guias_remision.split(',')
+        if isinstance(tipos_envase, str):
+            tipos_envase = tipos_envase.split(',')
+        if isinstance(cantidades, str):
+            cantidades = list(map(float, cantidades.split(',')))
+
+        # Verificar que la longitud de tipos_envase y cantidades coincidan
+        if len(tipos_envase) != len(cantidades):
+            return jsonify({'error': 'La cantidad de tipos de envase no coincide con las cantidades proporcionadas'}), 400
+
+        # Agregar registro al CSV
+        agregar_envase(
+            nuevo_id=nuevo_id,
+            cliente=cliente,
+            guias_remision=guias_remision,
+            tipos_envase=tipos_envase,
+            cantidades=cantidades,
+            fecha_hoy=fecha,
+            estado=estado
+        )
+
+        return jsonify({'message': 'Registro de devolución agregado exitosamente'}), 200
+
+    except Exception as e:
+        print(f"Error al agregar devolución: {e}")
+        return jsonify({'error': 'Hubo un error al guardar el registro de devolución'}), 500
+
+
+@app_router.post('/add-cliente')
+def agregar_cliente_route():
+    try:
+        # Obtén los datos del cliente desde la solicitud
+        data = request.get_json()
+        client_name = data.get('client_name')
+
+        if not client_name:
+            return jsonify({'error': 'El nombre del cliente es obligatorio'}), 400
+
+        # Llama a la función add_cliente
+        add_cliente(client_name)
+        return jsonify({'message': 'Cliente agregado exitosamente'}), 200
+    except Exception as e:
+        print(f"Error al agregar cliente: {e}")
+        return jsonify({'error': 'Error al agregar el cliente'}), 500
