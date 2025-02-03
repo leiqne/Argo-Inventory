@@ -22,21 +22,41 @@ def index():
         clientes_con_pendientes.append({"nombre": cliente, "pendientes": pendientes})
     
     return render_template('index.html', clientes=clientes_con_pendientes)
+from flask import request
+
 @app_router.get("/inventario")
 def inventario():
+    # Obtener todos los envases
     envases = leer_inventario()
 
+    # Ordenar los envases
     orden_estados = ['pendiente', 'cancelado', 'anulado']
     envases_ordenados = sorted(envases, key=lambda x: (orden_estados.index(x['estado']), x['fecha']))
 
-    return render_template('inventario.html', envases=envases_ordenados, zip=zip, path=[{'name': 'inventario', 'url':'#'}])
+    # Paginación
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_envases = envases_ordenados[start:end]
+    total_pages = (len(envases_ordenados) + per_page - 1) // per_page
 
+    return render_template(
+        'inventario.html',
+        envases=paginated_envases,
+        page=page,
+        total_pages=total_pages,
+        zip=zip,
+        path=[{'name': 'inventario', 'url': '#'}]
+    )
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
-    df = pd.read_csv(f"src/data/{client_name}.csv")
-    data = df[df['estado'] == 'pendiente']
-    data = csv_for_table(df=data)
-    return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'pendientes', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=data, zip=zip)
+    df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
+    orden = ['pendiente', 'cancelado', 'anulado']
+    df['estado'] = pd.Categorical(df['estado'], categories=orden, ordered=True)
+    df = df[df['estado'] == 'pendiente']
+    return render_template('sumary_pend.html', client_name=client_name, envases=df, zip=zip)
+
 
 @app_router.get("/summary/<string:client_name>")
 def sumary(client_name:str):
