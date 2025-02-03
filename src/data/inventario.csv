@@ -2,7 +2,7 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 674,Hialpesa,2022-07-01,"003-00215,0003-000216","Bidon plastico 150 kgs,IBC","2,1",cancelado
 675,Copacabana,2022-07-01,003-00217,Bidon plastico 120 kgs,3,cancelado
 676,Hialpesa,2022-08-04,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs,Bidon plastico 60 kgs,IBC","3,2,23,3",cancelado
-676,Modipsa,2024-12-11,003-00220,Bidon plastico 120 kgs,5,cancelado
+<<676,Modipsa,2024-12-11,003-00220,Bidon plastico 120 kgs,5,cancelado
 676,Copacabana,2024-12-26,003-00220,Bidon plastico 150 kgs,5,cancelado
 688,Copacabana,2024-12-29,003-00220,Bidon plastico 120 kgs,3,pendiente
 674,Copacabana,2024-12-23,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","3,4",pendiente
@@ -11,3 +11,13 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 32132,Copacabana,2024-12-31,0003-0284,Bidon plastico 120 kgs,3,cancelado
 690,Copacabana,2024-06-05,0003-000372,Bidon plastico 120 kgs,2,pendiente
 1058,Copacabana,2025-01-08,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","2,2",anulado
+681,Copacabana,2025-01-20,0003-000370,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","2,4",cancelado
+688,Copacabana,2025-01-27,0003-000372,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","3,2",pendiente
+674,Hialpesa,2025-01-29,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","2,2",pendiente
+674,Modipsa,2025-02-04,003-00220,Bidon plastico 120 kgs,1,pendiente
+674,Reyna Giulian,2025-02-14,003-00220,Bidon plastico 120 kgs,2,pendiente
+674,Reyna Giulian,2025-02-04,003-00220,Bidon plastico 120 kgs,1,pendiente
+1058,Modipsa,2025-01-27,003-00220,Bidon plastico 120 kgs,1,pendiente
+681,Copacabana,2025-01-30,003-00220,Bidon plastico 120 kgs,2,pendiente
+674,Hialpesa,2025-01-28,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","2,2",pendiente
+1058,Hialpesa,2025-03-07,003-00220,Bidon plastico 120 kgs,2,pendiente
