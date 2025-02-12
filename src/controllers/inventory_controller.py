@@ -118,8 +118,10 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
             reader = csv.DictReader(file)
             for row in reader:
                 if int(row.get('id', 0)) == nuevo_id:
+                    print("hola que tal")
+                    print(nuevo_id)
                     raise ValueError(f"El ID {nuevo_id} ya existe en el archivo de {cliente}.csv.")
-    
+
     # Convertir las cantidades a enteros y asegurarse de que las listas se guarden como cadenas separadas por comas
     cantidades = [int(float(c)) for c in cantidades]
     guias_remision_str = ','.join(guias_remision)

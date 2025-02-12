@@ -1,6 +1,9 @@
 id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
+650,Alianza Color,2022-06-01,"003-00223,003-00523",Bidon plastico 120 kgs,2,pendiente
+651,Alianza Color,2025-02-12,003-00223,Bidon plastico 120 kgs,1,pendiente
+652,Alianza Color,2022-06-01,"003-00223,003-00523",Bidon plastico 120 kgs,2,pendiente
+653,Alianza Color,2025-02-12,003-00223,Bidon plastico 120 kgs,1,pendiente
 655,Alianza Color,2025-01-27,003-00223,Bidon plastico 120 kgs,1,pendiente
-670,Reyna Giulian,2024-12-11,003-00223,Bidon plastico 120 kgs,2,pendiente
 688,Alianza Color,2025-02-05,003-00223,Bidon plastico 120 kgs,2,pendiente
 688,Alianza Color,2025-01-15,003-00223,Bidon plastico 150 kgs,2,pendiente
 688,Alianza Color,2025-01-08,003-00223,Bidon plastico 60 kgs,2,pendiente
@@ -8,5 +11,3 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 688,Alianza Color,2025-01-07,003-00223,Bidon plastico 120 kgs,2,pendiente
 688,Alianza Color,2025-01-20,003-00223,Bidon plastico 120 kgs,2,pendiente
 688,Alianza Color,2025-01-12,003-00223,Bidon plastico 120 kgs,2,pendiente
-674,Amazonas,2025-01-27,003-00223,Bidon plastico 120 kgs,3,pendiente
-800,Amazonas,2025-01-14,003-00220,Bidon plastico 120 kgs,3,anulado
