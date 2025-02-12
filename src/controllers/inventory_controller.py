@@ -8,7 +8,30 @@ path_data = Path(__file__).parent.parent / "data"
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
 
-def delete_registro(client_name, reg_id):
+def delete_from_csv(file_path, item_id):
+    """Elimina un registro de un archivo CSV basado en su ID"""
+    file_path = path_data / file_path  # Convertir a ruta absoluta
+    rows = []
+
+    if not file_path.exists():
+        return
+
+    with open(file_path, 'r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        headers = next(reader)
+        rows = [row for row in reader if row[0] != str(item_id)]
+
+    with open(file_path, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(headers)
+        writer.writerows(rows)
+
+def delete_record(client_name, item_id):
+    """Eliminar un registro de ambos archivos (cliente e inventario)"""
+    delete_from_csv(f"{client_name}.csv", item_id)
+    delete_from_csv("inventario.csv", item_id)
+
+def change_registro(client_name, reg_id):
     reg_id=int(reg_id)
     df = pd.read_csv(path_data / f"{client_name}.csv")
     df.loc[df["id"]==reg_id, "estado"]="cancelado"
