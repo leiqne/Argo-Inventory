@@ -5,7 +5,8 @@ from ..controllers.inventory_controller import (
     add_cliente,
     listar_clientes,
     envases_pendientes,
-    change_registro
+    change_registro,
+    delete_record
 )
 from ..helpers import csv_for_table
 import pandas as pd
@@ -23,7 +24,31 @@ def index():
         clientes_con_pendientes.append({"nombre": cliente, "pendientes": pendientes})
     
     return render_template('index.html', clientes=clientes_con_pendientes)
-from flask import request
+
+@app_router.delete('/api/inventario/<int:item_id>')
+def delete_inventario(item_id):
+    """Elimina un registro del inventario y del archivo del cliente"""
+    try:
+        # Obtener los datos actuales del inventario
+        envases = leer_inventario()
+        cliente_nombre = None
+
+        # Buscar el nombre del cliente asociado al ID
+        for envase in envases:
+            if envase['id'] == item_id:
+                cliente_nombre = envase['cliente']
+                break
+
+        if not cliente_nombre:
+            return jsonify({'error': 'No se encontró el cliente asociado'}), 404
+
+        # Eliminar el registro de ambos archivos
+        delete_record(cliente_nombre, item_id)
+
+        return jsonify({'message': 'Registro eliminado exitosamente'}), 200
+    except Exception as e:
+        print(f"Error al eliminar el registro: {e}")
+        return jsonify({'error': 'No se pudo eliminar el registro'}), 500
 
 @app_router.get("/inventario")
 def inventario():
