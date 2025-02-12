@@ -9,6 +9,7 @@ from ..controllers.inventory_controller import (
 )
 from ..helpers import csv_for_table
 import pandas as pd
+from datetime import datetime
 
 app_router = Blueprint("app_router", __file__)
 
@@ -29,9 +30,27 @@ def inventario():
     # Obtener todos los envases
     envases = leer_inventario()
 
+    # Obtener los parámetros de filtro y orden
+    filter_type = request.args.get('filter_type', default=None, type=str)
+    filter_value = request.args.get('filter_value', default=None, type=str)
+    sort_by = request.args.get('sort_by', default='fecha', type=str)  # Predeterminado: ordenar por fecha
+
+    # Aplicar filtro si se proporciona
+    if filter_type and filter_value:
+        if filter_type == 'id':
+            envases = [envase for envase in envases if str(envase['id']) == filter_value]
+        elif filter_type == 'year':
+            try:
+                envases = [envase for envase in envases if datetime.strptime(envase['fecha'], '%Y-%m-%d').year == int(filter_value)]
+            except ValueError:
+                pass
+
     # Ordenar los envases
-    orden_estados = ['pendiente', 'cancelado', 'anulado']
-    envases_ordenados = sorted(envases, key=lambda x: (orden_estados.index(x['estado']), x['fecha']))
+    if sort_by == 'id':
+        envases_ordenados = sorted(envases, key=lambda x: x['id'])
+    else:
+        orden_estados = ['pendiente', 'cancelado', 'anulado']
+        envases_ordenados = sorted(envases, key=lambda x: (orden_estados.index(x['estado']), x['fecha']))
 
     # Paginación
     page = request.args.get('page', 1, type=int)
@@ -47,8 +66,12 @@ def inventario():
         page=page,
         total_pages=total_pages,
         zip=zip,
-        path=[{'name': 'inventario', 'url': '#'}]
+        path=[{'name': 'inventario', 'url': '#'}],
+        filter_type=filter_type,
+        filter_value=filter_value,
+        sort_by=sort_by  # Pasar el orden actual a la plantilla
     )
+
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
     df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
@@ -83,7 +106,6 @@ def agregar_devolucion_route():
     try:
         # Obtén los datos del registro de devolución desde la solicitud
         data = request.get_json()
-        print(f"Datos recibidos: {data}")
 
         # Extraer datos de la solicitud
         cliente = data.get('cliente')

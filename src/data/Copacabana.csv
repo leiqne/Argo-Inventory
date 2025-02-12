@@ -1,12 +1,2 @@
 id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
-675,Copacabana,2022-07-01,003-00217,Bidon plastico 120 kgs,3,cancelado
-676,Copacabana,2024-12-26,003-00220,Bidon plastico 150 kgs,5,cancelado
-688,Copacabana,2024-12-29,003-00220,Bidon plastico 120 kgs,3,cancelado
-674,Copacabana,2024-12-23,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","3,4",cancelado
-681,Copacabana,2024-12-23,003-00220,Bidon plastico 120 kgs,4,cancelado
-32132,Copacabana,2024-12-31,0003-0284,Bidon plastico 120 kgs,3,cancelado
-690,Copacabana,2024-06-05,0003-000372,Bidon plastico 120 kgs,2,pendiente
-1058,Copacabana,2025-01-08,003-00220,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","2,2",anulado
-681,Copacabana,2025-01-20,0003-000370,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","2,4",cancelado
-688,Copacabana,2025-01-27,0003-000372,"Bidon plastico 120 kgs,Bidon plastico 150 kgs","3,2",pendiente
-681,Copacabana,2025-01-30,003-00220,Bidon plastico 120 kgs,2,pendiente
+
