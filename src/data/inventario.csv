@@ -1,2 +1,27 @@
 id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
-976,Hialpesa,2025-02-04,E607-42,Bidon plastico 120 kgs,1,pendiente
+974,Modipsa,2024-03-01,E607-40,"Bidon plastico 150 kgs,Bidon plastico 120 kgs","6,10",cancelado
+973,Amazonas,2024-02-27,E607-38,Bidon plastico 120 kgs,3,cancelado
+972,Landeo,2024-02-23,E607-34,Bidon plastico 120 kgs,1,cancelado
+971,Copacabana,2024-02-23,E607-33,Bidon plastico 120 kgs,2,cancelado
+970,Modipsa,2024-02-23,E607-32,"Bidon plastico 150 kgs,Bidon plastico 120 kgs,IBC","8,9,0",cancelado
+969,Copacabana,2024-02-16,E607-29,Bidon plastico 120 kgs,2,cancelado
+968,Modipsa,2024-02-16,"E607-27,E607-28","Bidon plastico 150 kgs,Bidon plastico 120 kgs","7,4",cancelado
+967,Modipsa,2024-02-08,"E607-25,E607-26","Bidon plastico 150 kgs,Bidon plastico 120 kgs","12,8",cancelado
+966,Copacabana,2024-02-07,E607-24,Bidon plastico 120 kgs,3,cancelado
+965,Amazonas,2024-02-06,E607-23,Bidon plastico 120 kgs,2,cancelado
+964,Modipsa,2024-02-01,"E607-19,E607-20","Bidon plastico 150 kgs,Bidon plastico 120 kgs","4,10",cancelado
+963,Modipsa,2024-01-25,"E607-17,E607-18","Bidon plastico 150 kgs,Bidon plastico 120 kgs","6,12",cancelado
+962,Copacabana,2024-01-24,E607-15,Bidon plastico 120 kgs,3,cancelado
+961,Amazonas,2024-01-23,E607-14,Bidon plastico 120 kgs,3,cancelado
+960,Modipsa,2024-01-18,E607-11,Bidon plastico 120 kgs,10,cancelado
+959,Modipsa,2024-01-16,,Bidon plastico 150 kgs,14,cancelado
+958,Copacabana,2024-01-11,E607-6,Bidon plastico 120 kgs,3,cancelado
+957,Modipsa,2024-01-10,E607-5,Bidon plastico 120 kgs,10,cancelado
+956,Modipsa,2024-01-09,E607-4,"Bidon plastico 150 kgs,Bidon plastico 120 kgs","4,3",cancelado
+955,Copacabana,2024-01-08,E607-3,Bidon plastico 120 kgs,4,cancelado
+954,Amazonas,2024-01-03,E607-1,Bidon plastico 120 kgs,2,cancelado
+925,Toallas Peruanas,2023-10-25,001-882,Bidon plastico 150 kgs,1,cancelado
+908,Marsar,2023-09-27,003-544,Bidon plastico 60 kgs,2,cancelado
+905,Marsar,2023-09-21,001-880,Bidon plastico 150 kgs,2,cancelado
+675,Copacabana,2022-07-01,0003-217,Bidon plastico 120 kgs,3,cancelado
+674,Hialpesa,2022-07-01,"0003-215,0003-216","Bidon plastico 150 kgs,IBC","2,1",cancelado
