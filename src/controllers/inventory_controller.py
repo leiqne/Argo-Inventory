@@ -8,7 +8,30 @@ path_data = Path(__file__).parent.parent / "data"
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
 
-def delete_registro(client_name, reg_id):
+def delete_from_csv(file_path, item_id):
+    """Elimina un registro de un archivo CSV basado en su ID"""
+    file_path = path_data / file_path  # Convertir a ruta absoluta
+    rows = []
+
+    if not file_path.exists():
+        return
+
+    with open(file_path, 'r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        headers = next(reader)
+        rows = [row for row in reader if row[0] != str(item_id)]
+
+    with open(file_path, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(headers)
+        writer.writerows(rows)
+
+def delete_record(client_name, item_id):
+    """Eliminar un registro de ambos archivos (cliente e inventario)"""
+    delete_from_csv(f"{client_name}.csv", item_id)
+    delete_from_csv("inventario.csv", item_id)
+
+def change_registro(client_name, reg_id):
     reg_id=int(reg_id)
     df = pd.read_csv(path_data / f"{client_name}.csv")
     df.loc[df["id"]==reg_id, "estado"]="cancelado"
@@ -118,8 +141,10 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
             reader = csv.DictReader(file)
             for row in reader:
                 if int(row.get('id', 0)) == nuevo_id:
+                    print("hola que tal")
+                    print(nuevo_id)
                     raise ValueError(f"El ID {nuevo_id} ya existe en el archivo de {cliente}.csv.")
-    
+
     # Convertir las cantidades a enteros y asegurarse de que las listas se guarden como cadenas separadas por comas
     cantidades = [int(float(c)) for c in cantidades]
     guias_remision_str = ','.join(guias_remision)
@@ -160,7 +185,7 @@ def obtener_nuevo_id():
     inventario = leer_inventario()
     ids = [row['id'] for row in inventario if isinstance(row['id'], int)]
     return max(ids, default=0) + 1
-
+    
 def buscar_envase(id_envase):
     """Busca un envase por ID."""
     inventario = leer_inventario()

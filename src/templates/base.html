@@ -5,23 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     {% block head %}{%endblock%}
 </head>
-
 <body
     class="absolute top-0 z-[-2] h-screen w-screen bg-gray-700">
     <div >
         <div class="bg-gray-200 dark:bg-gray-800">
-            <div class="container flex items-center px-6 py-4 mx-auto overflow-x-auto whitespace-nowrap">
-                <a href="/" class="text-gray-600 dark:text-gray-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path
-                            d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                    </svg>
+            <div class="container flex items-center px-6 py-2 mx-auto overflow-x-auto whitespace-nowrap gap-1">
+                <a href="/">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" style="width: 70px; height: 70px;">
                 </a>
-
-                
+                <div class="flex flex-col">
+                    <a href="/" class="text-gray-200 font-semibold" style="font-size: 18px;">Argo Inventory</a>
+                    <a href="/" class="text-gray-200 font-light"style="font-size: 12px;">Powered by It Quimica</a>
+                </div>                 
                 {% for path in paths %}
                 <span class="mx-5 text-gray-500 dark:text-gray-300 rtl:-scale-x-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">

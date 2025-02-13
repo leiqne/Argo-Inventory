@@ -1,10 +1,64 @@
 {%extends "base.html"%}
-{% block title %}Inventario de Envases{% endblock %}
+{% block title %}Argo Inventory{% endblock %}
 {% block body %}
 <section class="container px-4 mx-auto bg-gray-700">
-    <div class="flex items-center gap-x-3">
-        <h2 class="text-lg font-medium text-gray-800 dark:text-white">Lista de Envases</h2>
+<div class="flex mt-10 justify-between transition-all duration-300">
+    <!-- Switchbox para ordenar -->
+    <div class="flex items-center gap-x-3 mb-4">
+        <form id="sort-form" action="{{ url_for('app_router.inventario') }}" method="GET" class="flex items-center gap-x-3">
+            <!-- Mantener los filtros al cambiar el orden -->
+            <input type="hidden" name="filter_type" value="{{ filter_type or '' }}">
+            <input type="hidden" name="filter_value" value="{{ filter_value or '' }}">
+
+            <label for="switch-sort" class="flex items-center cursor-pointer">
+                <span class="text-sm text-gray-100 mr-2">Ordenar por Fecha</span>
+                <input type="checkbox" id="switch-sort" name="sort_by" value="id"
+                    {% if sort_by == 'id' %}checked{% endif %}
+                    class="hidden" onchange="this.form.submit()">
+                <div class="w-12 h-6 bg-gray-800 rounded-full flex items-center p-1 transition-colors duration-300 ease-in-out">
+                    <div class="w-5 h-5 bg-gray-300 rounded-full shadow-md transform transition-transform duration-300 ease-in-out
+                        {% if sort_by == 'id' %}translate-x-6 bg-blue-500{% endif %}">
+                    </div>
+                </div>
+                <span class="text-sm text-gray-100 ml-2">Ordenar por ID</span>
+            </label>
+        </form>
     </div>
+
+    <!-- Formulario de filtros -->
+    <div class="flex items-center gap-x-3 mb-4">
+        <form action="{{ url_for('app_router.inventario') }}" method="GET" class="flex items-center gap-x-3">
+            <select name="filter_type" class="px-4 py-2 text-sm text-gray-700 bg-white border rounded-md">
+                <option value="id" {% if filter_type == 'id' %}selected{% endif %}>Filtrar por ID</option>
+                <option value="year" {% if filter_type == 'year' %}selected{% endif %}>Filtrar por Año</option>
+            </select>
+            <input type="text" name="filter_value" placeholder="ID o Año" 
+                   value="{{ filter_value or '' }}"
+                   class="px-4 py-2 text-sm text-gray-700 bg-white border rounded-md">
+            <button type="submit" class="px-4 py-2 text-sm text-white bg-gray-800 rounded-md transition-colors duration-200 hover:bg-gray-600">
+                Filtrar
+            </button>
+        </form>
+
+        <!-- Botón para quitar filtro -->
+        {% if filter_type and filter_value %}
+            <a href="{{ url_for('app_router.inventario') }}" 
+               class="px-4 py-2 text-sm text-white bg-red-600 rounded-md transition-all duration-300 hover:bg-red-400">
+                Quitar filtro
+            </a>
+        {% endif %}
+    </div>
+</div>
+<div class="flex items-center gap-x-3">
+    <h2 class="text-3xl font-medium text-gray-800 dark:text-white">
+        {% if client_name %}
+            Resumen de {{ client_name }}
+        {% else %}
+            Lista de Envases
+        {% endif %}
+    </h2>
+</div>
+
 
     <div class="flex flex-col mt-6">
         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -66,11 +120,11 @@
 
                                 <th scope="col"
                                     class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                    Cantidades</th>
-
+                                    Fecha</th>
                                 <th scope="col"
                                     class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                    Fecha</th>
+                                    Borrar</th>
+                                <th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
@@ -122,23 +176,32 @@
                                 </td>
                                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                                     <div class="flex items-center gap-x-2">
-                                        {% for tipo, color in zip(envase['tipos_envase'], colors) %}
-                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">
-                                            {{tipo}}</p>
-                                        {%endfor%}
-                                    </div>
-                                </td>
-                                <td class="px-4 py-4 text-sm whitespace-nowrap">
-                                    <div class="flex items-center gap-x-2">
-                                        {% for cant, color in zip(envase['cantidades'], colors) %}
-                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">
-                                            {{cant}}</p>
+                                        {% for tipo, cant, color in zip(envase['tipos_envase'], envase['cantidades'],
+                                        colors) %}
+                                        {%if cant != "0"%}
+                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{tipo}}
+                                        </p>
+                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{cant}}
+                                        </p>
+                                        {%endif%}
                                         {%endfor%}
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                                     <p class="text-gray-200">{{envase['fecha']}}</p>
                                 </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                                    <div class="flex items-center gap-x-6">
+                                        <button data-id="{{ envase['id'] }}" onclick="deleteSelected(this)"
+                                            class="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                                
                             </tr>
                             {%endfor%}
                         </tbody>
