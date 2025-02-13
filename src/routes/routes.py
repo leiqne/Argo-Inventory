@@ -94,7 +94,8 @@ def inventario():
         path=[{'name': 'inventario', 'url': '#'}],
         filter_type=filter_type,
         filter_value=filter_value,
-        sort_by=sort_by  # Pasar el orden actual a la plantilla
+        sort_by=sort_by,  # Pasar el orden actual a la plantilla
+        client_name=None
     )
 
 @app_router.get("/pendientes/<string:client_name>")
@@ -107,13 +108,38 @@ def get_peendiente_by_client(client_name:str):
 
 
 @app_router.get("/summary/<string:client_name>")
-def sumary(client_name:str):
+def summary(client_name: str):
     df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
+    
+    # Ordenar por estado según prioridad
     orden = ['pendiente', 'cancelado', 'anulado']
     df['estado'] = pd.Categorical(df['estado'], categories=orden, ordered=True)
     df_ordenado = df.sort_values(by='estado')
 
-    return render_template('sumary_pend.html', client_name=client_name, paths=[{'name': 'summary', 'url':'#'}, {'name': client_name, 'url':f'#{client_name}'}], envases=df_ordenado, zip=zip)
+    # Convertir el DataFrame en una lista de diccionarios
+    envases = df_ordenado.to_dict(orient="records")
+
+    # Paginación
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_envases = envases[start:end]
+    total_pages = (len(envases) + per_page - 1) // per_page
+
+    return render_template(
+        'inventario.html',  # Reutilizando la plantilla de inventario
+        envases=paginated_envases,
+        page=page,
+        total_pages=total_pages,
+        zip=zip,
+        path=[{'name': 'summary', 'url': '#'}, {'name': client_name, 'url': f'#{client_name}'}],
+        filter_type=None,
+        filter_value=None,
+        sort_by='estado',
+        client_name=client_name  # Pasamos el nombre del cliente a la plantilla
+    )
+
 
 @app_router.delete('/api/pendientes/<string:client_name>')
 def delete_pendiente(client_name:str):
