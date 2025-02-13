@@ -185,7 +185,7 @@ def obtener_nuevo_id():
     inventario = leer_inventario()
     ids = [row['id'] for row in inventario if isinstance(row['id'], int)]
     return max(ids, default=0) + 1
-
+    
 def buscar_envase(id_envase):
     """Busca un envase por ID."""
     inventario = leer_inventario()

@@ -6,24 +6,29 @@ from ..controllers.inventory_controller import (
     listar_clientes,
     envases_pendientes,
     change_registro,
-    delete_record
+    delete_record,
+    obtener_nuevo_id
 )
 from ..helpers import csv_for_table
 import pandas as pd
 from datetime import datetime
 
 app_router = Blueprint("app_router", __file__)
+from datetime import datetime
 
 @app_router.get("/")
 def index():
     clientes = listar_clientes()
     clientes_con_pendientes = []
+    new_id = obtener_nuevo_id()
+    fecha = datetime.now().strftime('%Y-%m-%d')  # Formato correcto para <input type="date">
     
     for cliente in clientes:
         pendientes = envases_pendientes(cliente)
         clientes_con_pendientes.append({"nombre": cliente, "pendientes": pendientes})
     
-    return render_template('index.html', clientes=clientes_con_pendientes)
+    return render_template('index.html', clientes=clientes_con_pendientes, new_id=new_id, fecha_now=fecha)
+
 
 @app_router.delete('/api/inventario/<int:item_id>')
 def delete_inventario(item_id):
@@ -84,7 +89,6 @@ def inventario():
     end = start + per_page
     paginated_envases = envases_ordenados[start:end]
     total_pages = (len(envases_ordenados) + per_page - 1) // per_page
-
     return render_template(
         'inventario.html',
         envases=paginated_envases,
@@ -157,7 +161,6 @@ def agregar_devolucion_route():
     try:
         # Obtén los datos del registro de devolución desde la solicitud
         data = request.get_json()
-
         # Extraer datos de la solicitud
         cliente = data.get('cliente')
         nuevo_id = data.get('id')
