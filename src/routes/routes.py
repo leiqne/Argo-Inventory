@@ -63,7 +63,7 @@ def inventario():
     # Obtener los parámetros de filtro y orden
     filter_type = request.args.get('filter_type', default=None, type=str)
     filter_value = request.args.get('filter_value', default=None, type=str)
-    sort_by = request.args.get('sort_by', default='fecha', type=str)  # Predeterminado: ordenar por fecha
+    sort_by = request.args.get('sort_by', default='id', type=str) 
 
     # Aplicar filtro si se proporciona
     if filter_type and filter_value:

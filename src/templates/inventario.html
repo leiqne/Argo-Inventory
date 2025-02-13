@@ -2,7 +2,17 @@
 {% block title %}Argo Inventory{% endblock %}
 {% block body %}
 <section class="container px-4 mx-auto bg-gray-700">
-<div class="flex mt-10 justify-between transition-all duration-300">
+    <div class="mt-10 items-center gap-x-3">
+        <h2 class="text-3xl font-medium text-gray-800 dark:text-white">
+            {% if client_name %}
+                Resumen de {{ client_name }}
+            {% else %}
+                Lista de Envases
+            {% endif %}
+        </h2>
+        <h1 class="mt-5 text-gray-100 " style="font-size: 16px;">Ordenar por:</h1>
+    </div>
+<div class="flex justify-between transition-all duration-300">
     <!-- Switchbox para ordenar -->
     <div class="flex items-center gap-x-3 mb-4">
         <form id="sort-form" action="{{ url_for('app_router.inventario') }}" method="GET" class="flex items-center gap-x-3">
@@ -11,16 +21,16 @@
             <input type="hidden" name="filter_value" value="{{ filter_value or '' }}">
 
             <label for="switch-sort" class="flex items-center cursor-pointer">
-                <span class="text-sm text-gray-100 mr-2">Ordenar por Fecha</span>
-                <input type="checkbox" id="switch-sort" name="sort_by" value="id"
-                    {% if sort_by == 'id' %}checked{% endif %}
+                <span class="text-sm text-gray-100 mr-2">ID</span>
+                <input type="checkbox" id="switch-sort" name="sort_by" value="fecha"
+                    {% if sort_by == 'fecha' %}checked{% endif %}
                     class="hidden" onchange="this.form.submit()">
                 <div class="w-12 h-6 bg-gray-800 rounded-full flex items-center p-1 transition-colors duration-300 ease-in-out">
                     <div class="w-5 h-5 bg-gray-300 rounded-full shadow-md transform transition-transform duration-300 ease-in-out
-                        {% if sort_by == 'id' %}translate-x-6 bg-blue-500{% endif %}">
+                        {% if sort_by == 'fecha' %}translate-x-6 bg-blue-500{% endif %}">
                     </div>
                 </div>
-                <span class="text-sm text-gray-100 ml-2">Ordenar por ID</span>
+                <span class="text-sm text-gray-100 ml-2">Fecha</span>
             </label>
         </form>
     </div>
@@ -49,16 +59,6 @@
         {% endif %}
     </div>
 </div>
-<div class="flex items-center gap-x-3">
-    <h2 class="text-3xl font-medium text-gray-800 dark:text-white">
-        {% if client_name %}
-            Resumen de {{ client_name }}
-        {% else %}
-            Lista de Envases
-        {% endif %}
-    </h2>
-</div>
-
 
     <div class="flex flex-col mt-6">
         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
