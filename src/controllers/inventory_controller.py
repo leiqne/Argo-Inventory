@@ -41,7 +41,6 @@ def change_registro(client_name, reg_id):
     df.loc[df["id"]==reg_id, "estado"]="cancelado"
     df.to_csv(path_data / "inventario.csv", index=False)
 
-
 def leer_inventario():
     """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales de Python."""
     inventario = []
@@ -137,13 +136,10 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
     
     # Verificar si el archivo del cliente existe y si el ID ya está en uso
     if client_csv_path.exists():
-        with open(client_csv_path, mode='r', newline='', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                if int(row.get('id', 0)) == nuevo_id:
-                    print("hola que tal")
-                    print(nuevo_id)
-                    raise ValueError(f"El ID {nuevo_id} ya existe en el archivo de {cliente}.csv.")
+        df = pd.read_csv(client_csv_path)
+        df:pd.DataFrame = df[df["id"]==nuevo_id]
+        if not df.empty:
+            raise ValueError(f"El ID {nuevo_id} ya existe en el archivo de {cliente}.csv.")
 
     # Convertir las cantidades a enteros y asegurarse de que las listas se guarden como cadenas separadas por comas
     cantidades = [int(float(c)) for c in cantidades]
