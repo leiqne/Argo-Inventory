@@ -1,6 +1,5 @@
 {%extends "base.html"%}
 {% block title %}Argo Inventory{% endblock %}
-{%set colors = ["text-indigo-500 bg-indigo-100/60", "text-blue-500 bg-blue-100/60", "text-pink-500 bg-pink-100/60"]%}
 
 {% block body %}
 <section class="container px-4 mx-auto">
@@ -109,12 +108,11 @@
                                 </td>
                                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                                     <div class="flex items-center gap-x-2">
-                                        {% for tipo, cant, color in zip(envase['tipos_envase'], envase['cantidades'],
-                                        colors) %}
+                                        {% for tipo, cant, color in zip(envase['tipos_envase'], envase['cantidades'], colors) %}
                                         {%if cant != "0"%}
-                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{tipo}}
+                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 text-{{color}}-500 bg-{{color}}-100/60">{{tipo}}
                                         </p>
-                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{cant}}
+                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 text-{{color}}-500 bg-{{color}}-100/60">{{cant}}
                                         </p>
                                         {%endif%}
                                         {%endfor%}

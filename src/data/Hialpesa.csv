@@ -1,2 +1,3 @@
 id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 674,Hialpesa,2022-07-01,"0003-215,0003-216","Bidon plastico 150 kgs,IBC","2,1",cancelado
+2,Hialpesa,2022-07-01,"0003-215,0003-216,0003-217,0003-218","Bidon plastico 150 kgs,IBC,otro,uno","2,1,1,4",pendiente

@@ -105,8 +105,6 @@ def inventario():
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
     df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
-    orden = ['pendiente', 'cancelado', 'anulado']
-    df['estado'] = pd.Categorical(df['estado'], categories=orden, ordered=True)
     df = df[df['estado'] == 'pendiente']
     return render_template('sumary_pend.html', client_name=client_name, envases=df, zip=zip)
 

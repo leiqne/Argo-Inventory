@@ -13,9 +13,9 @@ def csv_for_table(path: str = None, df=None, to_dict=True, aggf={}) -> list:
     df['cantidades'] = df['cantidades'].astype(str)
     
     aggF = {
-        "guias_remision": lambda x: list(set(item for sublist in x for item in sublist)),
-        "tipos_envase": lambda x: list(set(item for sublist in x for item in sublist)),
-        "cantidades": lambda x: list(set(item for sublist in x for item in sublist)),
+        "guias_remision": lambda x: list(item for sublist in x for item in sublist),
+        "tipos_envase": lambda x: list(item for sublist in x for item in sublist),
+        "cantidades": lambda x: list(item for sublist in x for item in sublist),
         "fecha": "first"
     }
     
