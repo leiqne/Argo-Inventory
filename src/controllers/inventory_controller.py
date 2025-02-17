@@ -126,20 +126,11 @@ def listar_clientes():
 def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, fecha_hoy=None, estado='pendiente'):
     """
     Agrega un nuevo envase con múltiples guías de remisión, tipos de envases y cantidades.
-    Retorna un error si el ID ya existe en el archivo del cliente.
+    Retorna un error si el ID ya existe en el archivo general 'inventario.csv'.
     """
+    client_csv_path = path_data / f"{cliente}.csv"
     if not fecha_hoy:
         fecha_hoy = datetime.today().strftime('%Y-%m-%d')
-        
-    # Crear la ruta específica para el cliente
-    client_csv_path = path_data / f"{cliente}.csv"
-    
-    # Verificar si el archivo del cliente existe y si el ID ya está en uso
-    if client_csv_path.exists():
-        df = pd.read_csv(client_csv_path)
-        df:pd.DataFrame = df[df["id"]==nuevo_id]
-        if not df.empty:
-            raise ValueError(f"El ID {nuevo_id} ya existe en el archivo de {cliente}.csv.")
 
     # Convertir las cantidades a enteros y asegurarse de que las listas se guarden como cadenas separadas por comas
     cantidades = [int(float(c)) for c in cantidades]
@@ -156,7 +147,16 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
         'cantidades': cantidades_str,
         'estado': estado
     }
-    
+
+    # Agregar el registro al archivo general 'inventario.csv'
+    with open(CSV_PATH, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
+        
+        if file.tell() == 0:
+            writer.writeheader()
+        
+        writer.writerow(registro)
+
     # Agregar el registro al archivo específico del cliente
     with open(client_csv_path, mode='a', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
@@ -166,16 +166,21 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
         
         writer.writerow(registro)
     
-    # Agregar el mismo registro al archivo general 'inventario.csv'
-    with open(CSV_PATH, mode='a', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
+def id_exists(id):
+    if os.path.exists(CSV_PATH):
+        df = pd.read_csv(CSV_PATH)
+        df['id'] = df['id'].astype(str).str.strip().astype(int)
         
-        if file.tell() == 0:
-            writer.writeheader()
+        id = int(id)
         
-        writer.writerow(registro)
-
-
+        if not df[df['id'] == id].empty:
+            return 1 
+        else:
+            return 0 
+    else:
+        print("CSV file does not exist")
+        return 0
+    
 def obtener_nuevo_id():
     """Obtiene un nuevo ID incremental para el próximo registro."""
     inventario = leer_inventario()

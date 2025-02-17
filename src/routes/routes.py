@@ -7,7 +7,8 @@ from ..controllers.inventory_controller import (
     envases_pendientes,
     change_registro,
     delete_record,
-    obtener_nuevo_id
+    obtener_nuevo_id,
+    id_exists
 )
 from ..helpers import csv_for_table
 import pandas as pd
@@ -171,16 +172,14 @@ def agregar_devolucion_route():
         # Validar los campos obligatorios
         if not cliente or not nuevo_id or not fecha or not guias_remision or not tipos_envase or not cantidades:
             return jsonify({'error': 'Todos los campos son obligatorios'}), 400
-
-        # Convertir listas en caso de que sean cadenas separadas por comas
+        if id_exists(nuevo_id):
+            return jsonify({'error': 'El ID ya existe'}), 400
         if isinstance(guias_remision, str):
             guias_remision = guias_remision.split(',')
         if isinstance(tipos_envase, str):
             tipos_envase = tipos_envase.split(',')
         if isinstance(cantidades, str):
             cantidades = list(map(float, cantidades.split(',')))
-
-        # Verificar que la longitud de tipos_envase y cantidades coincidan
         if len(tipos_envase) != len(cantidades):
             return jsonify({'error': 'La cantidad de tipos de envase no coincide con las cantidades proporcionadas'}), 400
 
