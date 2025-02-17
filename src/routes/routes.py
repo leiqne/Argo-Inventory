@@ -22,7 +22,7 @@ def index():
     clientes = listar_clientes()
     clientes_con_pendientes = []
     new_id = obtener_nuevo_id()
-    fecha = datetime.now().strftime('%Y-%m-%d')  # Formato correcto para <input type="date">
+    fecha = datetime.now().strftime('%Y-%m-%d')
     
     for cliente in clientes:
         pendientes = envases_pendientes(cliente)
@@ -78,11 +78,15 @@ def inventario():
 
     # Ordenar los envases
     if sort_by == 'id':
-        envases_ordenados = sorted(envases, key=lambda x: x['id'])
+    # Ordenar por id
+        envases_ordenados = sorted(envases, key=lambda x: (x['estado'] != 'pendiente', x['id'] if x['estado'] == 'pendiente' else -x['id']))
     else:
-        orden_estados = ['pendiente', 'cancelado', 'anulado']
-        envases_ordenados = sorted(envases, key=lambda x: (orden_estados.index(x['estado']), x['fecha']))
-
+    # Ordenar por fecha
+        envases_ordenados = sorted(envases, key=lambda x: (
+            x['estado'] != 'pendiente',  # Los pendientes primero (False < True)
+            datetime.strptime(x['fecha'], '%Y-%m-%d') if x['estado'] == 'pendiente' else datetime.max - datetime.strptime(x['fecha'], '%Y-%m-%d'),  # Ascendente para pendientes, descendente para no pendientes
+            x['id'] if x['estado'] == 'pendiente' else -x['id']  # Ascendente por id para pendientes, descendente para no pendientes
+        ))
     # Paginación
     page = request.args.get('page', 1, type=int)
     per_page = 20
@@ -99,7 +103,7 @@ def inventario():
         path=[{'name': 'inventario', 'url': '#'}],
         filter_type=filter_type,
         filter_value=filter_value,
-        sort_by=sort_by,  # Pasar el orden actual a la plantilla
+        sort_by=sort_by,
         client_name=None
     )
 
