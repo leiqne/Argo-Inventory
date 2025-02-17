@@ -178,7 +178,6 @@ def id_exists(id):
         else:
             return 0 
     else:
-        print("CSV file does not exist")
         return 0
     
 def obtener_nuevo_id():

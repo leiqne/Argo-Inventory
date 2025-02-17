@@ -132,20 +132,46 @@ function init() {
 
         ModalAddCliente.classList.add('hidden');
     });
-
-    // Mostrar el menú contextual
-    clienteItems.forEach((item) => {
+    //clientes
+    document.querySelectorAll('.cliente-item').forEach(item => {
         item.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-
-            const clienteId = item.dataset.cliente;
-            currentClienteId = clienteId;
+            e.preventDefault(); // Prevenir el menú contextual predeterminado
+    
+            // Eliminar la clase 'active-hover' de todos los clientes
+            document.querySelectorAll('.cliente-item').forEach(cliente => {
+                cliente.classList.remove('active-hover');
+            });
+    
+            // Agregar la clase 'active-hover' al cliente seleccionado
+            item.classList.add('active-hover');
+    
+            // Mostrar el menú contextual
+            const contextMenu = document.getElementById('context-menu');
             contextMenu.style.top = `${e.clientY}px`;
             contextMenu.style.left = `${e.clientX}px`;
-
             contextMenu.classList.remove('hidden');
+            
+            // Guardar el cliente actual para usarlo en el menú contextual
+            const clienteId = item.getAttribute('data-cliente');
+            currentClienteId = clienteId;
         });
     });
+    
+    document.addEventListener('click', (e) => {
+        const contextMenu = document.getElementById('context-menu');
+        const clienteItems = document.querySelectorAll('.cliente-item');
+    
+        // Si el clic es fuera de los elementos '.cliente-item' y el menú contextual, eliminar la clase 'active-hover'
+        if (!e.target.closest('.cliente-item') && !e.target.closest('#context-menu')) {
+            clienteItems.forEach(item => {
+                item.classList.remove('active-hover');
+            });
+            contextMenu.classList.add('hidden');
+        }
+    });
+    
+    
+    
 
     // Ocultar el menú contextual al hacer clic fuera
     document.addEventListener('click', () => {
