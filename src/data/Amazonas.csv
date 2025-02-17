@@ -3,3 +3,4 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 965,Amazonas,2024-02-06,E607-23,Bidon plastico 120 kgs,2,cancelado
 961,Amazonas,2024-01-23,E607-14,Bidon plastico 120 kgs,3,cancelado
 954,Amazonas,2024-01-03,E607-1,Bidon plastico 120 kgs,2,cancelado
+2,Amazonas,2025-02-16,0003-000370,"Bidon plastico 150 kgs,Bidon plastico 120 kgs,Bidon plastico 60 kgs,IBC","1,1,1,1",pendiente
