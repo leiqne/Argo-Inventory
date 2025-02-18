@@ -114,7 +114,7 @@ def inventario():
 def get_peendiente_by_client(client_name:str):
     df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
     df = df[df['estado'] == 'pendiente']
-    return render_template('sumary_pend.html', client_name=client_name, envases=df, zip=zip)
+    return render_template('sumary_pend.html', client_name=client_name, envases=df, zip=zip, get_client_color=get_client_color)
 
 
 @app_router.get("/summary/<string:client_name>")
