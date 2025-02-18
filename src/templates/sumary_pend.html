@@ -1,7 +1,6 @@
 {%extends "base.html"%}
 {% block title %}Argo Inventory{% endblock %}
 {%set colors = ["text-indigo-500 bg-indigo-100/60", "text-blue-500 bg-blue-100/60", "text-pink-500 bg-pink-100/60"]%}
-
 {% block body %}
 <section class="container px-4 mx-auto">
     <div class="flex items-center gap-x-3 mt-10">
@@ -17,8 +16,6 @@
                             <tr>
                                 <th scope="col"
                                     class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                    <input type="checkbox"
-                                        class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
                                     <span>ID</span>
                                 </th>
                                 
@@ -62,16 +59,16 @@
                             {% for i, envase in envases.iterrows() %}
                             <tr>
                                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                                    <input type="checkbox"
-                                        class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
                                     {{ envase['id'] }}
                                 </td>
                                 <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                                     <div class="inline-flex items-center gap-x-3">
                                         <div class="flex items-center gap-x-2">
-                                            <img class="object-cover w-10 h-10 rounded-full"
-                                                src="https://media.tenor.com/j3iVFlGS5hEAAAAC/oshi-no-ko-hoshino-ai.gif"
-                                                alt="">
+                                            <div class="{{ get_client_color(envase['cliente'] if 'cliente' in envase else client_name) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                                </svg>
+                                            </div>
                                             <div>
                                                 <h2 class="font-medium text-gray-800 dark:text-white">
                                                     {{client_name}}</h2>
@@ -109,8 +106,7 @@
                                 </td>
                                 <td class="px-4 py-4 text-sm whitespace-nowrap">
                                     <div class="flex items-center gap-x-2">
-                                        {% for tipo, cant, color in zip(envase['tipos_envase'], envase['cantidades'],
-                                        colors) %}
+                                        {% for tipo, cant, color in zip(envase['tipos_envase'], envase['cantidades'], colors) %}
                                         {%if cant != "0"%}
                                         <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{tipo}}
                                         </p>

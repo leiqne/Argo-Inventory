@@ -44,40 +44,39 @@ function init() {
     formRegistroDevolucion.addEventListener('submit', async (e) => {
         e.preventDefault();
     
-        // Crear el objeto de datos
-        const data = Object.fromEntries(new FormData(formRegistroDevolucion).entries());
-    
-        // Obtener los tipos de envase seleccionados
-        const tiposEnvase = Array.from(
-            document.querySelectorAll('input[name="tipos_envase"]:checked')
-        ).map(checkbox => ({
-            value: checkbox.value,
-            element: checkbox.parentElement
-        }));
-        
-
-        console.log({tiposEnvase});
-        
-        // Obtener las cantidades correspondientes
-        const cantidades = tiposEnvase.map(envase => {
-            const cantidadInput = envase.element.nextElementSibling
-            return cantidadInput ? parseInt(cantidadInput.value || '0', 10) : 0;
-        });
-
-        // Validar que todas las cantidades sean enteros positivos
-        if (!cantidades.every(cantidad => Number.isInteger(cantidad) && cantidad >= 0)) {
-            alert('Las cantidades deben ser números enteros positivos.');
-            return;
-        }
-    
-        // Agregar tipos de envase y cantidades al objeto de datos
-        data.tipos_envase = tiposEnvase.map(e => e.value);
-        data.cantidades = cantidades;
-    
-        console.log('Datos enviados:', data);
-    
         try {
-            const req = await fetch('/add-devolucion', {
+            // Crear el objeto de datos desde el formulario
+            const data = Object.fromEntries(new FormData(formRegistroDevolucion).entries());
+    
+            // Obtener los tipos de envase seleccionados y sus cantidades
+            const tiposEnvase = Array.from(document.querySelectorAll('input[name="tipos_envase"]:checked'))
+                .map(checkbox => ({
+                    value: checkbox.value,
+                    element: checkbox.parentElement
+                }));
+    
+            console.log({ tiposEnvase });
+    
+            // Obtener las cantidades correspondientes
+            const cantidades = tiposEnvase.map(envase => {
+                const cantidadInput = envase.element.nextElementSibling;
+                return cantidadInput ? parseInt(cantidadInput.value || '0', 10) : 0;
+            });
+    
+            // Validar que todas las cantidades sean enteros positivos
+            if (!cantidades.every(cantidad => Number.isInteger(cantidad) && cantidad > 0)) {
+                alert('Las cantidades deben ser números enteros positivos y mayores a 0.');
+                return;
+            }
+    
+            // Agregar los valores al objeto de datos
+            data.tipos_envase = tiposEnvase.map(e => e.value);
+            data.cantidades = cantidades;
+    
+            console.log('Datos enviados:', data);
+    
+            // Enviar la solicitud al backend
+            const response = await fetch('/add-devolucion', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,19 +84,24 @@ function init() {
                 body: JSON.stringify(data),
             });
     
-            if (req.ok) {
-                alert('Registro de devolución guardado exitosamente');
-                location.reload();
-                ModalRegistroDevolucion.classList.add('hidden');
-            } else {
-                alert('Hubo un error al guardar el registro.');
+            const result = await response.json(); // Convertir la respuesta a JSON
+    
+            if (!response.ok) {
+                // Si el backend devuelve un error, mostrar el mensaje adecuado
+                throw new Error(result.error || 'Hubo un error desconocido al guardar el registro.');
             }
+    
+            // Si todo salió bien
+            alert(result.message || 'Registro de devolución guardado exitosamente');
+            location.reload();
+            ModalRegistroDevolucion.classList.add('hidden');
+    
         } catch (error) {
             console.error('Error al guardar el registro:', error);
-            alert('Error inesperado al guardar el registro.');
+            alert(error.message || 'Error inesperado al guardar el registro.');
         }
-   
     });
+    
     
 
     // Mostrar el modal al hacer clic en "Agregar Cliente"
@@ -128,22 +132,46 @@ function init() {
 
         ModalAddCliente.classList.add('hidden');
     });
-
-    // Mostrar el menú contextual
-    clienteItems.forEach((item) => {
+    //clientes
+    document.querySelectorAll('.cliente-item').forEach(item => {
         item.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-
-            const clienteId = item.dataset.cliente;
-            currentClienteId = clienteId;
-            console.log('Cliente seleccionado:', clienteId);
-
+            e.preventDefault(); // Prevenir el menú contextual predeterminado
+    
+            // Eliminar la clase 'active-hover' de todos los clientes
+            document.querySelectorAll('.cliente-item').forEach(cliente => {
+                cliente.classList.remove('active-hover');
+            });
+    
+            // Agregar la clase 'active-hover' al cliente seleccionado
+            item.classList.add('active-hover');
+    
+            // Mostrar el menú contextual
+            const contextMenu = document.getElementById('context-menu');
             contextMenu.style.top = `${e.clientY}px`;
             contextMenu.style.left = `${e.clientX}px`;
-
             contextMenu.classList.remove('hidden');
+            
+            // Guardar el cliente actual para usarlo en el menú contextual
+            const clienteId = item.getAttribute('data-cliente');
+            currentClienteId = clienteId;
         });
     });
+    
+    document.addEventListener('click', (e) => {
+        const contextMenu = document.getElementById('context-menu');
+        const clienteItems = document.querySelectorAll('.cliente-item');
+    
+        // Si el clic es fuera de los elementos '.cliente-item' y el menú contextual, eliminar la clase 'active-hover'
+        if (!e.target.closest('.cliente-item') && !e.target.closest('#context-menu')) {
+            clienteItems.forEach(item => {
+                item.classList.remove('active-hover');
+            });
+            contextMenu.classList.add('hidden');
+        }
+    });
+    
+    
+    
 
     // Ocultar el menú contextual al hacer clic fuera
     document.addEventListener('click', () => {

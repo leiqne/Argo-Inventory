@@ -1,0 +1,27 @@
+#buscadorClientes:hover {
+    transform: scale(1.02);
+}
+/*clientes*/
+.cliente-item {
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.cliente-item:hover,
+.cliente-item.active-hover {
+    transform: scale(1.02);
+    background-color: #2d3748;  /* Un tono ligeramente más oscuro para el fondo */
+}
+
+.cliente-item.active-hover .text-gray-700,
+.cliente-item.active-hover .dark\:text-white {
+    color: #edf2f7; /* Cambia el color del texto cuando el mouse pasa o si está activado el hover */
+}
+
+#btnAddCliente, #btnInventario {
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+#btnAddCliente:hover, #btnInventario:hover {
+    transform: scale(1.02);
+    background-color: #2d3748;  /* Un tono ligeramente más oscuro para el fondo */
+}
