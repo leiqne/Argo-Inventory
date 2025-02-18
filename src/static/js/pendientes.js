@@ -12,7 +12,7 @@ deleteSelected = async (e) => {
         return;
     }
 
-    if (confirm('¿Está seguro de eliminar los registros seleccionados?')) {
+    if (confirm('¿Está seguro que desea cambiar el estado a cancelado?')) {
         try {
             const response = await fetch(`/api/pendientes/${CLIENT_NAME}`, {
                 method: 'DELETE',
@@ -26,11 +26,11 @@ deleteSelected = async (e) => {
                 alert('Registros eliminados correctamente.');
                 e.parentElement.parentElement.parentElement.remove();
             } else {
-                alert('Ocurrió un error al intentar eliminar los registros.');
+                alert('Ocurrió un error al intentar cambiar el estado de los registros.');
             }
         } catch (error) {
             console.error(error);
-            alert('Ocurrió un error al intentar eliminar los registros.');
+            alert('Ocurrió un error al intentar cambiar el estado de los registros.');
         }
     }
 }

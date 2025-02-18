@@ -8,7 +8,8 @@ from ..controllers.inventory_controller import (
     change_registro,
     delete_record,
     obtener_nuevo_id,
-    id_exists
+    id_exists,
+    get_client_color
 )
 from ..helpers import csv_for_table
 import pandas as pd
@@ -106,7 +107,8 @@ def inventario():
         sort_by=sort_by,
         client_name=None,
         current_endpoint='app_router.inventario',
-        route_params={}
+        route_params={},
+        get_client_color=get_client_color
     )
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
@@ -166,7 +168,8 @@ def summary(client_name: str):
         sort_by=sort_by,
         client_name=client_name,
         current_endpoint='app_router.summary',
-        route_params={'client_name': client_name}
+        route_params={'client_name': client_name},
+        get_client_color=get_client_color
     )
 
 

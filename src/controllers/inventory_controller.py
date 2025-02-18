@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 import pandas as pd
 from pathlib import Path
-
+import hashlib
 path_data = Path(__file__).parent.parent / "data"
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), '../data/inventario.csv')
@@ -71,6 +71,31 @@ def leer_inventario():
             # Agregar la fila procesada al inventario
             inventario.append(row)
     return inventario
+
+
+import hashlib
+
+def get_client_color(cliente):
+    colors = [
+        "red", "blue", "green", "yellow", "purple", "pink", "indigo", "teal", "cyan",
+        "orange", "lime", "emerald", "amber", "fuchsia", "violet", "rose", "sky"
+    ]
+
+    hash_value = int(hashlib.sha256(cliente.encode()).hexdigest(), 16)
+    color_index = hash_value % len(colors)
+
+    if not hasattr(get_client_color, "assigned_colors"):
+        get_client_color.assigned_colors = {}
+
+    if cliente in get_client_color.assigned_colors:
+        return f"text-{get_client_color.assigned_colors[cliente]}-500"
+    else:
+        while colors[color_index] in get_client_color.assigned_colors.values():
+            color_index = (color_index + 1) % len(colors)  
+
+        get_client_color.assigned_colors[cliente] = colors[color_index]
+        return f"text-{colors[color_index]}-500"
+
 
 def get_csv_cliente(client_name):
     """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales"""

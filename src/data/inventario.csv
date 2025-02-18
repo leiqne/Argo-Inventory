@@ -14,7 +14,7 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 962,Copacabana,2024-01-24,E607-15,Bidon plastico 120 kgs,3,cancelado
 961,Amazonas,2024-01-23,E607-14,Bidon plastico 120 kgs,3,cancelado
 960,Modipsa,2024-01-18,E607-11,Bidon plastico 120 kgs,10,cancelado
-959,Modipsa,2024-01-16,NULL,Bidon plastico 150 kgs,14,cancelado
+959,Modipsa,2024-01-16,,Bidon plastico 150 kgs,14,cancelado
 958,Copacabana,2024-01-11,E607-6,Bidon plastico 120 kgs,3,cancelado
 957,Modipsa,2024-01-10,E607-5,Bidon plastico 120 kgs,10,cancelado
 956,Modipsa,2024-01-09,E607-4,"Bidon plastico 150 kgs,Bidon plastico 120 kgs","4,3",cancelado
@@ -31,4 +31,4 @@ id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
 978,Pruebas,2021-12-27,0003-000370,Bidon plastico 150 kgs,1,pendiente
 979,Pruebas,2025-02-17,0003-000370,Bidon plastico 150 kgs,2,cancelado
 980,Pruebas,2025-02-17,003-00220,Bidon plastico 150 kgs,2,cancelado
-981,Pruebas,2025-02-17,0003-000370,"Bidon plastico 150 kgs,Bidon plastico 120 kgs,Bidon plastico 60 kgs,IBC","1,1,1,1",pendiente
+981,Pruebas,2025-02-17,0003-000370,"Bidon plastico 150 kgs,Bidon plastico 120 kgs,Bidon plastico 60 kgs,IBC","1,1,1,1",cancelado
