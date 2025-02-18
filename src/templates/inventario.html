@@ -175,19 +175,20 @@
                                         {%endfor%}
                                     </div>
                                 </td>
-                                <td class="px-4 py-4 text-sm whitespace-nowrap">
-                                    <div class="flex items-center gap-x-2">
-                                        {% for tipo, cant, color in zip(envase['tipos_envase'], envase['cantidades'],
-                                        colors) %}
-                                        {%if cant != "0"%}
-                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{tipo}}
-                                        </p>
-                                        <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{cant}}
-                                        </p>
-                                        {%endif%}
-                                        {%endfor%}
+                                <td class="px-4 py-4 text-sm whitespace-normal h-auto">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        {% for tipo, cant, color in zip(envase['tipos_envase'], envase['cantidades'], colors) %}
+                                            {% if cant != "0" %}
+                                                <div class="flex gap-x-2">
+                                                    <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{tipo}}</p>
+                                                    <p class="px-3 py-1 text-xs rounded-full dark:bg-gray-800 {{color}}">{{cant}}</p>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
                                     </div>
-                                </td>
+                                </td>                                
+                                
+                                
                                 <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
                                     <p class="text-gray-200">{{envase['fecha']}}</p>
                                 </td>
