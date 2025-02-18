@@ -104,9 +104,10 @@ def inventario():
         filter_type=filter_type,
         filter_value=filter_value,
         sort_by=sort_by,
-        client_name=None
+        client_name=None,
+        current_endpoint='app_router.inventario',
+        route_params={}
     )
-
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
     df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
@@ -116,35 +117,56 @@ def get_peendiente_by_client(client_name:str):
 
 @app_router.get("/summary/<string:client_name>")
 def summary(client_name: str):
-    df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
+    envases = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=True, aggf={'estado': 'first'})
     
-    # Ordenar por estado según prioridad
-    orden = ['pendiente', 'cancelado', 'anulado']
-    df['estado'] = pd.Categorical(df['estado'], categories=orden, ordered=True)
-    df_ordenado = df.sort_values(by='estado')
+    # Obtener los parámetros de filtro y orden
+    filter_type = request.args.get('filter_type', default=None, type=str)
+    filter_value = request.args.get('filter_value', default=None, type=str)
+    sort_by = request.args.get('sort_by', default='id', type=str) 
 
-    # Convertir el DataFrame en una lista de diccionarios
-    envases = df_ordenado.to_dict(orient="records")
+    # Aplicar filtro si se proporciona
+    if filter_type and filter_value:
+        if filter_type == 'id':
+            envases = [envase for envase in envases if str(envase['id']) == filter_value]
+        elif filter_type == 'year':
+            try:
+                envases = [envase for envase in envases if datetime.strptime(envase['fecha'], '%Y-%m-%d').year == int(filter_value)]
+            except ValueError:
+                pass
+
+    # Ordenar los envases
+    if sort_by == 'id':
+    # Ordenar por id
+        envases_ordenados = sorted(envases, key=lambda x: (x['estado'] != 'pendiente', x['id'] if x['estado'] == 'pendiente' else -x['id']))
+    else:
+    # Ordenar por fecha
+        envases_ordenados = sorted(envases, key=lambda x: (
+            x['estado'] != 'pendiente',  # Los pendientes primero (False < True)
+            datetime.strptime(x['fecha'], '%Y-%m-%d') if x['estado'] == 'pendiente' else datetime.max - datetime.strptime(x['fecha'], '%Y-%m-%d'),  # Ascendente para pendientes, descendente para no pendientes
+            x['id'] if x['estado'] == 'pendiente' else -x['id']  # Ascendente por id para pendientes, descendente para no pendientes
+        ))
 
     # Paginación
     page = request.args.get('page', 1, type=int)
     per_page = 20
     start = (page - 1) * per_page
     end = start + per_page
-    paginated_envases = envases[start:end]
-    total_pages = (len(envases) + per_page - 1) // per_page
+    paginated_envases = envases_ordenados[start:end]
+    total_pages = (len(envases_ordenados) + per_page - 1) // per_page
 
     return render_template(
-        'inventario.html',  # Reutilizando la plantilla de inventario
+        'inventario.html',
         envases=paginated_envases,
         page=page,
         total_pages=total_pages,
         zip=zip,
         path=[{'name': 'summary', 'url': '#'}, {'name': client_name, 'url': f'#{client_name}'}],
-        filter_type=None,
-        filter_value=None,
-        sort_by='estado',
-        client_name=client_name  # Pasamos el nombre del cliente a la plantilla
+        filter_type=filter_type,
+        filter_value=filter_value,
+        sort_by=sort_by,
+        client_name=client_name,
+        current_endpoint='app_router.summary',
+        route_params={'client_name': client_name}
     )
 
 

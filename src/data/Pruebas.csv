@@ -1,7 +1,7 @@
 id,cliente,fecha,guias_remision,tipos_envase,cantidades,estado
-58,Pruebas,2025-02-17,0003-000370,Bidon plastico 150 kgs,1,pendiente
-975,Pruebas,2025-02-17,0003-000370,Bidon plastico 150 kgs,2,anulado
 976,Pruebas,2025-02-17,0003-000370,Bidon plastico 150 kgs,1,cancelado
 977,Pruebas,2025-02-17,0003-000370,Bidon plastico 150 kgs,1,pendiente
 59,Pruebas,2025-02-17,0003-000370,Bidon plastico 150 kgs,1,pendiente
 978,Pruebas,2021-12-27,0003-000370,Bidon plastico 150 kgs,1,pendiente
+979,Pruebas,2025-02-17,0003-000370,Bidon plastico 150 kgs,2,cancelado
+980,Pruebas,2025-02-17,003-00220,Bidon plastico 150 kgs,2,cancelado

@@ -15,7 +15,7 @@
 <div class="flex justify-between transition-all duration-300">
     <!-- Switchbox para ordenar -->
     <div class="flex items-center gap-x-3 mb-4">
-        <form id="sort-form" action="{{ url_for('app_router.inventario') }}" method="GET" class="flex items-center gap-x-3">
+        <form id="sort-form" action="{{ url_for(current_endpoint, **route_params) }}" method="GET" class="flex items-center gap-x-3">
             <!-- Mantener los filtros al cambiar el orden -->
             <input type="hidden" name="filter_type" value="{{ filter_type or '' }}">
             <input type="hidden" name="filter_value" value="{{ filter_value or '' }}">
@@ -35,9 +35,10 @@
         </form>
     </div>
 
+
     <!-- Formulario de filtros -->
     <div class="flex items-center gap-x-3 mb-4">
-        <form action="{{ url_for('app_router.inventario') }}" method="GET" class="flex items-center gap-x-3">
+        <form action="{{ url_for(current_endpoint, **route_params) }}" method="GET" class="flex items-center gap-x-3">
             <select name="filter_type" class="px-4 py-2 text-sm text-gray-700 bg-white border rounded-md">
                 <option value="id" {% if filter_type == 'id' %}selected{% endif %}>Filtrar por ID</option>
                 <option value="year" {% if filter_type == 'year' %}selected{% endif %}>Filtrar por Año</option>
@@ -52,7 +53,7 @@
 
         <!-- Botón para quitar filtro -->
         {% if filter_type and filter_value %}
-            <a href="{{ url_for('app_router.inventario') }}" 
+        <a href="{{ url_for(current_endpoint, **route_params) }}"
                class="px-4 py-2 text-sm text-white bg-red-600 rounded-md transition-all duration-300 hover:bg-red-400">
                 Quitar filtro
             </a>
