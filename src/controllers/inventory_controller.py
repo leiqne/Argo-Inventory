@@ -1,27 +1,30 @@
+from pathlib import Path
 import csv
-import os
 from datetime import datetime
 import pandas as pd
 import hashlib
-import glob
+from flask import current_app
 
-path_data = os.path.join(os.path.dirname(__file__), '../data')
-CSV_PATH = os.path.join(path_data, 'inventario.csv')
+def get_data_folder():
+    """Obtiene la carpeta de datos configurada en la aplicación Flask e itera sobre sus archivos."""
+    data_folder = Path(current_app.config['folder_data'])
+    return data_folder
 
-def delete_from_csv(file_path, item_id):
+def delete_from_csv(file_name, item_id):
     """Elimina un registro de un archivo CSV basado en su ID"""
-    file_path = os.path.join(path_data, file_path)
-    rows = []
+    file_path = get_data_folder() / file_name
 
-    if not os.path.exists(file_path):
+    if not file_path.exists():
+        print(f"El archivo {file_path} no existe.")
         return
 
-    with open(file_path, 'r', newline='', encoding='utf-8') as file:
+    rows = []
+    with file_path.open('r', newline='', encoding='utf-8') as file:
         reader = csv.reader(file)
         headers = next(reader)
         rows = [row for row in reader if row[0] != str(item_id)]
 
-    with open(file_path, 'w', newline='', encoding='utf-8') as file:
+    with file_path.open('w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(headers)
         writer.writerows(rows)
@@ -33,24 +36,32 @@ def delete_record(client_name, item_id):
 
 def change_registro(client_name, reg_id):
     reg_id = int(reg_id)
-    client_csv_path = os.path.join(path_data, f"{client_name}.csv")
+    client_csv_path = get_data_folder() / f"{client_name}.csv"
+
     df = pd.read_csv(client_csv_path)
     df.loc[df["id"] == reg_id, "estado"] = "cancelado"
     df.to_csv(client_csv_path, index=False)
     
-    df = pd.read_csv(CSV_PATH)
+    inventario_csv_path = get_data_folder() / "inventario.csv"
+
+    df = pd.read_csv(inventario_csv_path)
     df.loc[df["id"] == reg_id, "estado"] = "cancelado"
-    df.to_csv(CSV_PATH, index=False)
+    df.to_csv(inventario_csv_path, index=False)
 
 def leer_inventario():
     """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales de Python."""
+    csv_path = get_data_folder() / "inventario.csv"
+
+    if not csv_path.exists():
+        print(f"El archivo {csv_path} no existe.")
+        return []
+
     inventario = []
-    with open(CSV_PATH, mode='r', newline='', encoding='utf-8-sig') as file:
+    with csv_path.open(mode='r', newline='', encoding='utf-8-sig') as file:
         reader = csv.DictReader(file, delimiter=',')
         
-        for i, row in enumerate(reader, start=1):
-            # Saltar filas vacías
-            if not any(row.values()): 
+        for row in reader:
+            if not any(row.values()):  # Evitar filas vacías
                 continue
             
             try:
@@ -58,18 +69,16 @@ def leer_inventario():
             except ValueError:
                 row['id'] = 0
 
-            row['fecha'] = row.get('fecha')
-            
-            # Convertir cadenas separadas por comas en listas
+            row['fecha'] = row.get('fecha', '')
+
             row['guias_remision'] = [item.strip() for item in row.get('guias_remision', '').split(',') if item.strip()]
             row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
             row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
-            
-            # Dejar el estado tal cual (en minúsculas para uniformidad)
+
             row['estado'] = row.get('estado', '').strip().lower()
             
-            # Agregar la fila procesada al inventario
             inventario.append(row)
+
     return inventario
 
 def get_client_color(cliente):
@@ -95,32 +104,27 @@ def get_client_color(cliente):
 
 def get_csv_cliente(client_name):
     """Lee todos los registros del archivo CSV y convierte listas separadas por comas en listas reales"""
+    client_csv_path = get_data_folder() / f"{client_name}.csv"
+
     inventario = []
-    client_csv_path = os.path.join(path_data, f"{client_name}.csv")
-    
-    with open(client_csv_path, mode='r', newline='', encoding='utf-8-sig') as file:
+    with client_csv_path.open(mode='r', newline='', encoding='utf-8-sig') as file:
         reader = csv.DictReader(file, delimiter=',')
         
-        for i, row in enumerate(reader, start=1):
-            # Saltar filas vacías
-            if not any(row.values()):
+        for row in reader:
+            if not any(row.values()):  # Saltar filas vacías
                 continue
             
-            # Conversión de ID (maneja errores si no es entero)
             try:
                 row['id'] = int(row.get('id', 0))
             except ValueError:
                 row['id'] = 0
             
-            # Conversión de fecha (si está vacía, usa la fecha de hoy)
             row['fecha'] = row.get('fecha') if row.get('fecha') else datetime.today().strftime('%Y-%m-%d')
             
-            # Conversión de listas separadas por comas
             row['guias_remision'] = [item.strip() for item in row.get('guias_remision', '').split(',') if item.strip()]
             row['tipos_envase'] = [item.strip() for item in row.get('tipos_envase', '').split(',') if item.strip()]
             row['cantidades'] = [item.strip() for item in row.get('cantidades', '').split(',') if item.strip()]
             
-            # Conversión de estado a booleano
             row['estado'] = row.get('estado', 'False').strip()
             
             inventario.append(row)
@@ -128,14 +132,19 @@ def get_csv_cliente(client_name):
     return inventario
 
 def add_cliente(client_name):
-    client_path = os.path.join(path_data, f"{client_name}.csv")
+    client_path = get_data_folder() / f"{client_name}.csv"
+
+    if client_path.exists():
+        return False 
     df = pd.DataFrame(columns=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
     df.to_csv(client_path, index=False)
+    return True 
 
 def envases_pendientes(client_name):
+    client_path = get_data_folder() / f"{client_name}.csv"
+
     contador_pendientes = 0
-    client_path = os.path.join(path_data, f"{client_name}.csv")
-    with open(client_path, mode='r', newline='', encoding='utf-8-sig') as file:
+    with client_path.open(mode='r', newline='', encoding='utf-8-sig') as file:
         reader = csv.DictReader(file, delimiter=',')
         
         for fila in reader:
@@ -144,14 +153,19 @@ def envases_pendientes(client_name):
     return contador_pendientes
 
 def listar_clientes():
-    return [os.path.splitext(os.path.basename(file))[0] for file in glob.glob(os.path.join(path_data, "*.csv")) if os.path.basename(file) != "inventario.csv"]
+    """Lista los nombres de clientes en la carpeta de datos"""
+    data_folder = get_data_folder()
+
+    return [file.stem for file in data_folder.glob("*.csv") if file.name != "inventario.csv"]
 
 def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, fecha_hoy=None, estado='pendiente'):
     """
     Agrega un nuevo envase con múltiples guías de remisión, tipos de envases y cantidades.
     Retorna un error si el ID ya existe en el archivo general 'inventario.csv'.
     """
-    client_csv_path = os.path.join(path_data, f"{cliente}.csv")
+    client_csv_path = get_data_folder() / f"{cliente}.csv"
+    inventario_csv_path = get_data_folder() / "inventario.csv"
+
     if not fecha_hoy:
         fecha_hoy = datetime.today().strftime('%Y-%m-%d')
 
@@ -172,7 +186,7 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
     }
 
     # Agregar el registro al archivo general 'inventario.csv'
-    with open(CSV_PATH, mode='a', newline='', encoding='utf-8') as file:
+    with inventario_csv_path.open(mode='a', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
         
         if file.tell() == 0:
@@ -181,7 +195,7 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
         writer.writerow(registro)
 
     # Agregar el registro al archivo específico del cliente
-    with open(client_csv_path, mode='a', newline='', encoding='utf-8') as file:
+    with client_csv_path.open(mode='a', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=['id', 'cliente', 'fecha', 'guias_remision', 'tipos_envase', 'cantidades', 'estado'])
         
         if file.tell() == 0:
@@ -190,8 +204,10 @@ def agregar_envase(nuevo_id, cliente, guias_remision, tipos_envase, cantidades, 
         writer.writerow(registro)
 
 def id_exists(id):
-    if os.path.exists(CSV_PATH):
-        df = pd.read_csv(CSV_PATH)
+    inventario_csv_path = get_data_folder() / "inventario.csv"
+
+    if inventario_csv_path.exists():
+        df = pd.read_csv(inventario_csv_path)
         df['id'] = df['id'].astype(str).str.strip().astype(int)
         
         id = int(id)

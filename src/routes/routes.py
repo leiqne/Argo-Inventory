@@ -9,7 +9,8 @@ from ..controllers.inventory_controller import (
     delete_record,
     obtener_nuevo_id,
     id_exists,
-    get_client_color
+    get_client_color,
+    get_data_folder
 )
 from ..helpers import csv_for_table
 import pandas as pd
@@ -112,14 +113,14 @@ def inventario():
     )
 @app_router.get("/pendientes/<string:client_name>")
 def get_peendiente_by_client(client_name:str):
-    df = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
+    df = csv_for_table(get_data_folder()/f"{client_name}.csv", to_dict=False, aggf={'estado': 'first'})
     df = df[df['estado'] == 'pendiente']
     return render_template('sumary_pend.html', client_name=client_name, envases=df, zip=zip, get_client_color=get_client_color)
 
 
 @app_router.get("/summary/<string:client_name>")
 def summary(client_name: str):
-    envases = csv_for_table(path=f"src/data/{client_name}.csv", to_dict=True, aggf={'estado': 'first'})
+    envases = csv_for_table(get_data_folder()/f"{client_name}.csv", to_dict=True, aggf={'estado': 'first'})
     
     # Obtener los parámetros de filtro y orden
     filter_type = request.args.get('filter_type', default=None, type=str)
@@ -241,7 +242,10 @@ def agregar_cliente_route():
             return jsonify({'error': 'El nombre del cliente es obligatorio'}), 400
 
         # Llama a la función add_cliente
-        add_cliente(client_name)
+        if add_cliente(client_name)==0:
+            return jsonify({'message': 'El nombre del cliente ya existe'}), 400
+        else:
+            add_cliente(client_name)
         return jsonify({'message': 'Cliente agregado exitosamente'}), 200
     except Exception as e:
         print(f"Error al agregar cliente: {e}")

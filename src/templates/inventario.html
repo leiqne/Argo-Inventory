@@ -214,11 +214,11 @@
         </div>
     </div>
 
-    <div class="w-full flex justify-center mt-6">
+    <div class="w-full flex justify-center mt-6" style="padding: 30px;">
         <div class="flex items-center gap-2">
             <!-- Página Anterior -->
             {% if page > 1 %}
-            <a href="{{ url_for('app_router.inventario', page=page-1, filter_type=filter_type, filter_value=filter_value, sort_by=sort_by) }}"
+            <a href="{{ url_for(current_endpoint, page=page-1, filter_type=filter_type, filter_value=filter_value, sort_by=sort_by, **route_params) }}"
                 class="flex items-center px-3 py-2 text-sm text-gray-700 transition hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-5 h-5">
@@ -241,7 +241,7 @@
                         {{ num }}
                     </span>
                 {% else %}
-                    <a href="{{ url_for('app_router.inventario', page=num, filter_type=filter_type, filter_value=filter_value, sort_by=sort_by) }}"
+                    <a href="{{ url_for(current_endpoint, page=num, filter_type=filter_type, filter_value=filter_value, sort_by=sort_by, **route_params) }}"
                         class="px-3 py-1 text-gray-700 transition hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400">
                         {{ num }}
                     </a>
@@ -250,7 +250,7 @@
     
             <!-- Página Siguiente -->
             {% if page < total_pages %}
-            <a href="{{ url_for('app_router.inventario', page=page+1, filter_type=filter_type, filter_value=filter_value, sort_by=sort_by) }}"
+            <a href="{{ url_for(current_endpoint, page=page+1, filter_type=filter_type, filter_value=filter_value, sort_by=sort_by, **route_params) }}"
                 class="flex items-center px-3 py-2 text-sm text-gray-700 transition hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-5 h-5">
