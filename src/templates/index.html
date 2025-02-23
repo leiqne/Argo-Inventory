@@ -5,7 +5,7 @@
 <main class="bg-gray-700 relative">
 
     <section class="w-full h-screen grid grid-cols-4 pt-3 relative">
-        <div class="col-span-3">
+        <div class="col-span-3" style="padding: 0 0 80px 0;">
             <!--buscador-->
             <div class="buscador max-w-2xl mx-auto mb-4 my-4">
                 <div class="relative flex justify-end">
@@ -137,7 +137,8 @@
                 <div class="col-span-2">
                     <label class="text-gray-700 dark:text-gray-200">Tipos de Envase</label>
                     <div class="text-gray-200 flex flex-col gap-2 mt-2">
-
+                
+                        <!-- Bidón plástico 150 kgs -->
                         <label class="flex items-center justify-between">
                             <div class="flex items-center">
                                 <input type="checkbox" name="tipos_envase" value="Bidon plastico 150 kgs" class="mr-2 rounded text-blue-600">
@@ -147,6 +148,8 @@
                                 placeholder="Cantidad" 
                                 class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
                         </label>
+                
+                        <!-- Bidón plástico 120 kgs -->
                         <label class="flex items-center justify-between">
                             <div class="flex items-center">
                                 <input type="checkbox" name="tipos_envase" value="Bidon plastico 120 kgs" class="mr-2 rounded text-blue-600">
@@ -156,6 +159,8 @@
                                 placeholder="Cantidad" 
                                 class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
                         </label>
+                
+                        <!-- Bidón plástico 60 kgs -->
                         <label class="flex items-center justify-between">
                             <div class="flex items-center">
                                 <input type="checkbox" name="tipos_envase" value="Bidon plastico 60 kgs" class="mr-2 rounded text-blue-600">
@@ -165,6 +170,8 @@
                                 placeholder="Cantidad" 
                                 class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
                         </label>
+                
+                        <!-- IBC -->
                         <label class="flex items-center justify-between">
                             <div class="flex items-center">
                                 <input type="checkbox" name="tipos_envase" value="IBC" class="mr-2 rounded text-blue-600">
@@ -173,6 +180,27 @@
                             <input type="number" name="cantidad_ibc" min="0" step="1"
                                 placeholder="Cantidad" 
                                 class="px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
+                        </label>
+                
+                        <!-- Caneca plástico -->
+                        <label class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="tipos_envase" value="Caneca plastico" class="mr-2 rounded text-blue-600">
+                                Caneca plástico
+                            </div>
+                            <div class="flex gap-2">
+                                <!-- Campo de Kilos -->
+                                <div class="relative">
+                                    <input type="number" name="kilos_caneca" min="0" step="5"
+                                        placeholder="Kilos"
+                                        class="w-24 px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
+                                </div>
+                            
+                                <!-- Campo de Cantidad -->
+                                <input type="number" name="cantidad_caneca" min="0" step="1"
+                                    placeholder="Cantidad"
+                                    class="w-24 px-2 py-1 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
+                            </div>
                         </label>
                     </div>
                 </div>

@@ -45,53 +45,48 @@ function init() {
         e.preventDefault();
     
         try {
-            // Crear el objeto de datos desde el formulario
             const data = Object.fromEntries(new FormData(formRegistroDevolucion).entries());
     
-            // Obtener los tipos de envase seleccionados y sus cantidades
-            const tiposEnvase = Array.from(document.querySelectorAll('input[name="tipos_envase"]:checked'))
-                .map(checkbox => ({
-                    value: checkbox.value,
-                    element: checkbox.parentElement
-                }));
+            // Obtener los tipos de envase seleccionados y sus datos
+            const tiposEnvase = Array.from(document.querySelectorAll('input[name="tipos_envase"]:checked')).map(checkbox => {
+                const label = checkbox.closest('label');
+                const kilosInput = label.querySelector('input[name^="kilos"]');
+                const cantidadInput = label.querySelector('input[name^="cantidad"]');
     
-            console.log({ tiposEnvase });
+                const kilos = kilosInput ? parseFloat(kilosInput.value) || 0 : 0;
+                const cantidad = cantidadInput ? parseInt(cantidadInput.value) || 0 : 0;
     
-            // Obtener las cantidades correspondientes
-            const cantidades = tiposEnvase.map(envase => {
-                const cantidadInput = envase.element.nextElementSibling;
-                return cantidadInput ? parseInt(cantidadInput.value || '0', 10) : 0;
+                return {
+                    tipo: checkbox.value,
+                    kilos: kilos,
+                    cantidad: cantidad,
+                    descripcion: kilos > 0 ? `${kilos} kgs ${checkbox.value}` : checkbox.value
+                };
             });
     
-            // Validar que todas las cantidades sean enteros positivos
-            if (!cantidades.every(cantidad => Number.isInteger(cantidad) && cantidad > 0)) {
-                alert('Las cantidades deben ser números enteros positivos y mayores a 0.');
+            // Validación de datos
+            if (!tiposEnvase.every(envase => (envase.kilos >= 0 && envase.cantidad > 0))) {
+                alert('Debe ingresar una cantidad válida y, si aplica, los kilos deben ser mayores a 0.');
                 return;
             }
     
-            // Agregar los valores al objeto de datos
-            data.tipos_envase = tiposEnvase.map(e => e.value);
-            data.cantidades = cantidades;
+            // Formatear datos para el servidor
+            data.tipos_envase = tiposEnvase.map(e => e.descripcion);
+            data.cantidades = tiposEnvase.map(e => e.cantidad);
     
             console.log('Datos enviados:', data);
     
-            // Enviar la solicitud al backend
+            // Enviar los datos al backend
             const response = await fetch('/add-devolucion', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
     
-            const result = await response.json(); // Convertir la respuesta a JSON
+            const result = await response.json();
     
-            if (!response.ok) {
-                // Si el backend devuelve un error, mostrar el mensaje adecuado
-                throw new Error(result.error || 'Hubo un error desconocido al guardar el registro.');
-            }
+            if (!response.ok) throw new Error(result.error || 'Hubo un error desconocido al guardar el registro.');
     
-            // Si todo salió bien
             alert(result.message || 'Registro de devolución guardado exitosamente');
             location.reload();
             ModalRegistroDevolucion.classList.add('hidden');
@@ -118,19 +113,31 @@ function init() {
     formAddCliente.addEventListener('submit', async (e) => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(formAddCliente).entries());
-
-        const req = await fetch('/add-cliente', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-
-        const res = await req.json();
-        console.log('Respuesta del servidor:', res);
-
-        ModalAddCliente.classList.add('hidden');
+    
+        try {
+            const req = await fetch('/add-cliente', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+    
+            const res = await req.json();
+    
+            if (!req.ok) {
+                // Si hay un error, muestra el mensaje en la interfaz
+                alert(res.error || 'Error al agregar el cliente');
+                return;
+            }
+    
+            // Si todo está bien, muestra el mensaje de éxito
+            alert(res.message || 'Cliente agregado exitosamente');
+            ModalAddCliente.classList.add('hidden');
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+            alert('Error en la conexión con el servidor');
+        }
     });
     //clientes
     document.querySelectorAll('.cliente-item').forEach(item => {
@@ -147,10 +154,11 @@ function init() {
     
             // Mostrar el menú contextual
             const contextMenu = document.getElementById('context-menu');
-            contextMenu.style.top = `${e.clientY}px`;
-            contextMenu.style.left = `${e.clientX}px`;
+            const scrollY = window.scrollY; // Obtener el desplazamiento vertical de la página
+            contextMenu.style.top = `${e.clientY + scrollY}px`; // Ajustar la posición Y
+            contextMenu.style.left = `${e.clientX}px`; // La posición X no necesita ajuste
             contextMenu.classList.remove('hidden');
-            
+    
             // Guardar el cliente actual para usarlo en el menú contextual
             const clienteId = item.getAttribute('data-cliente');
             currentClienteId = clienteId;
@@ -208,20 +216,31 @@ function init() {
 
 }
 
-
 function initListenerChecboxes() {
     const checkboxes = document.querySelectorAll('input[type="checkbox"][name="tipos_envase"]');
+
     checkboxes.forEach((checkbox) => {
         checkbox.addEventListener('change', () => {
-            // Crear el selector del input correspondiente a la cantidad
-            const cantidadInput = checkbox.parentElement.nextElementSibling;
+            // Obtener el contenedor del checkbox
+            const container = checkbox.closest('label');
 
+            // Buscar los inputs dentro del mismo contenedor
+            const cantidadInput = container.querySelector('input[name^="cantidad_"]');
+            const kilosInput = container.querySelector('input[name^="kilos_"]'); // Para Caneca Plástico
+
+            // Habilitar/deshabilitar los inputs de cantidad y kilos según el estado del checkbox
             if (cantidadInput) {
-                cantidadInput.disabled = !checkbox.checked; // Habilitar/deshabilitar según el estado del checkbox
-                if (!checkbox.checked) {
-                    cantidadInput.value = ''; // Limpiar valor si se desmarca
-                }
+                cantidadInput.disabled = !checkbox.checked;
+                if (!checkbox.checked) cantidadInput.value = '';
+            }
+
+            if (kilosInput) {
+                kilosInput.disabled = !checkbox.checked;
+                if (!checkbox.checked) kilosInput.value = '';
             }
         });
     });
 }
+
+// Llamar la función después de cargar el DOM
+document.addEventListener('DOMContentLoaded', initListenerChecboxes);
